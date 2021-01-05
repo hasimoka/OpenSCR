@@ -119,9 +119,9 @@ namespace OpenSCR
 			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.BugSolid, "バグ", "BugPanel"));
 			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.UserSolid, "ユーザ", "UserPanel"));
 			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.CoffeeSolid, "珈琲", "CoffeePanel"));
-			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.FontAwesomeBrands, "サイコー！", "AwesomePanel"));
+			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.FontAwesomeBrands, "カメラ設定", "CameraCommonPanel"));
 
-			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.CogsSolid, "設定", "SettingPanel"));
+			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.CogsSolid, "設定", "OptionCommonPanel"));
 			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.InfoCircleSolid, "このサンプルアプリについて", "AboutPanel"));
 		}
 

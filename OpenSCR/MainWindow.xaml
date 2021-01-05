@@ -50,15 +50,6 @@
  						 SelectedOptionsIndex="{Binding SelectedOptionIndex.Value, Mode=TwoWay}">
         <metro:HamburgerMenu.Content>
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="48"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <!--<md:ColorZone Mode="Dark" Padding="10">
-                    <TextBlock Text="MahApps.Metro サンプル"
-							   HorizontalAlignment="Center"
-							   Style="{StaticResource MaterialDesignHeadline6TextBlock}" />
-                </md:ColorZone>-->
                 <metro:TransitioningContentControl x:Name="ContentRegion"
 												   Grid.Row="1"
 												   prism:RegionManager.RegionName="ContentRegion"

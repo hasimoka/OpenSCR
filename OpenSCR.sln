@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalationGhostModelBase", "H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalationGhostWpfViewModels", "HalationGhostWpfViewModels\HalationGhostWpfViewModels.csproj", "{AEAEA0C6-0622-4216-BB8F-85F717BC28EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionViews", "OptionViews\OptionViews.csproj", "{00E7DC6E-EE31-4D63-BAE5-EF52665C800B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSCRLib", "OpenSCRLib\OpenSCRLib.csproj", "{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{AEAEA0C6-0622-4216-BB8F-85F717BC28EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEAEA0C6-0622-4216-BB8F-85F717BC28EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEAEA0C6-0622-4216-BB8F-85F717BC28EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00E7DC6E-EE31-4D63-BAE5-EF52665C800B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00E7DC6E-EE31-4D63-BAE5-EF52665C800B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00E7DC6E-EE31-4D63-BAE5-EF52665C800B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00E7DC6E-EE31-4D63-BAE5-EF52665C800B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

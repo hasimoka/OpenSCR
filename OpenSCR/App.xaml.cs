@@ -11,6 +11,8 @@ using Prism.DryIoc;
 using Prism.Modularity;
 using Prism.Mvvm;
 using System.Reflection;
+using OptionViews;
+using OpenSCRLib;
 
 namespace OpenSCR
 {
@@ -25,7 +27,7 @@ namespace OpenSCR
         {
             //moduleCatalog.AddModule<StartUpViewModule>();
             //moduleCatalog.AddModule<ChildViewsModule>();
-            //moduleCatalog.AddModule<OptionViewsModule>();
+            moduleCatalog.AddModule<OptionViewsModule>();
         }
 
         /// <summary>ViewModelLocatorを設定します。</summary>
@@ -51,6 +53,11 @@ namespace OpenSCR
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IMainWindowService, MainWindowService>();
+
+            containerRegistry.RegisterInstance(this.Container);
+            containerRegistry.RegisterInstance(typeof(DatabaseAccesser), new DatabaseAccesser());
         }
+
+
     }
 }

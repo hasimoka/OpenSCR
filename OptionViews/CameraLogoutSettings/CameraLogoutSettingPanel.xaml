@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="OptionViews.CameraLogoutSettings.CameraLogoutSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:metroControl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:OptionViews.CameraLogoutSettings" 
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="250"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="50"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="CameraLoginInfoTextBlock"
+                   FontSize="12"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Height="28"
+                   Margin="3"
+                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                   Text="{Binding CameraLoginAnnouncement.Value, Mode=TwoWay}"
+                   Grid.Column="0"/>
+        <Button x:Name="Login"
+                Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" 
+                Height="24" Width="24"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Command="{Binding LogoutCameraClick}"
+                Grid.Column="1">
+            <iconPacks:PackIconEntypo Kind="LogOut"/>
+        </Button>
+    </Grid>
+</UserControl>
