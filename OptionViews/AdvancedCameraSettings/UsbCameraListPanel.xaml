@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="OptionViews.AdvancedCameraSettings.UsbCameraListPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:local="clr-namespace:OptionViews.AdvancedCameraSettings"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="250" 
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <materialDesign:Card Margin="4" 
+                             Grid.Row="1">
+            <ListBox x:Name="CameraDeviceList" 
+                     SelectionMode="Single"
+                     ItemsSource="{Binding CameraDeviceListSource}"
+                     SelectedItem="{Binding CameraDeviceSelectedItem.Value, Mode=TwoWay}">
+                <behaviours:Interaction.Triggers>
+                    <behaviours:EventTrigger EventName="SelectionChanged">
+                        <rp:EventToReactiveCommand Command="{Binding SelectionChangedCameraDeviceList}"/>
+                    </behaviours:EventTrigger>
+                </behaviours:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="CameraDeviceName"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"
+                                       Text="{Binding DeviceName.Value, Mode=TwoWay}"
+                                       Grid.Row="0"/>
+                            <TextBlock x:Name="CameraDeviceIpAddress"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Text="{Binding IpAddress.Value, Mode=TwoWay}"
+                                       Grid.Row="1"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

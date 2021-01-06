@@ -3,7 +3,7 @@ using System.Net;
 
 namespace OpenSCRLib
 {
-    public class CameraDeviceInfo
+    public class IpCameraDeviceInfo
     {
         public Uri EndpointUri { get; set; }
 
@@ -19,7 +19,7 @@ namespace OpenSCRLib
             }
         }
 
-        public CameraDeviceInfo()
+        public IpCameraDeviceInfo()
         {
             this.EndpointUri = null;
             this.Name = string.Empty;

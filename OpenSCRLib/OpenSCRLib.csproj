@@ -45,10 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CameraDeviceInfo.cs" />
+    <Compile Include="IpCameraDeviceInfo.cs" />
     <Compile Include="CameraLoginInfo.cs" />
     <Compile Include="DatabaseAccesser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UsbCameraDeviceInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

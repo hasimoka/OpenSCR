@@ -251,8 +251,25 @@
       <DependentUpon>AdvancedCameraSettingPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="AdvancedCameraSettings\AdvancedCameraSettingPanelViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\CameraDeviceListItemViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\IpCameraDeviceListItemViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\IpCameraListPanel.xaml.cs">
+      <DependentUpon>IpCameraListPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedCameraSettings\IpCameraListPanelViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\IpCameraSettingPanel.xaml.cs">
+      <DependentUpon>IpCameraSettingPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedCameraSettings\IpCameraSettingPanelViewModel.cs" />
     <Compile Include="AdvancedCameraSettings\OnvifProfileViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\UsbCameraDeviceListItemViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\UsbCameraListPanel.xaml.cs">
+      <DependentUpon>UsbCameraListPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedCameraSettings\UsbCameraListPanelViewModel.cs" />
+    <Compile Include="AdvancedCameraSettings\UsbCameraSettingPanel.xaml.cs">
+      <DependentUpon>UsbCameraSettingPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedCameraSettings\UsbCameraSettingPanelViewModel.cs" />
     <Compile Include="CameraBlankSettings\CameraBlankSettingPanel.xaml.cs">
       <DependentUpon>CameraBlankSettingPanel.xaml</DependentUpon>
     </Compile>
@@ -284,6 +301,22 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AdvancedCameraSettings\AdvancedCameraSettingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AdvancedCameraSettings\IpCameraListPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AdvancedCameraSettings\IpCameraSettingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AdvancedCameraSettings\UsbCameraListPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AdvancedCameraSettings\UsbCameraSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

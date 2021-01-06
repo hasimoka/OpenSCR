@@ -11,9 +11,9 @@ namespace OptionViews.Models
 
         private object userState;
 
-        private Action<CameraDeviceInfo> deviceDiscoveriedAction;
+        private Action<IpCameraDeviceInfo> deviceDiscoveriedAction;
 
-        public WsDiscoveryClient(Action<CameraDeviceInfo> deviceDiscoveriedAction)
+        public WsDiscoveryClient(Action<IpCameraDeviceInfo> deviceDiscoveriedAction)
         {
             this.deviceDiscoveriedAction = deviceDiscoveriedAction;
 
@@ -60,7 +60,7 @@ namespace OptionViews.Models
             {
                 if (uri.HostNameType == UriHostNameType.IPv4)
                 {
-                    var deviceInfo = new CameraDeviceInfo();
+                    var deviceInfo = new IpCameraDeviceInfo();
                     deviceInfo.EndpointUri = uri;
 
                     foreach (var scope in e.EndpointDiscoveryMetadata.Scopes)

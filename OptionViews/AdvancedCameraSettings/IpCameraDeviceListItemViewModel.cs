@@ -6,7 +6,7 @@ using System;
 
 namespace OptionViews.AdvancedCameraSettings
 {
-    class CameraDeviceListItemViewModel : HalationGhostViewModelBase
+    public class IpCameraDeviceListItemViewModel : HalationGhostViewModelBase
     {
         public ReactiveProperty<string> DeviceName { get; }
 
@@ -16,7 +16,7 @@ namespace OptionViews.AdvancedCameraSettings
 
         public string Location { get; set; }
 
-        public CameraDeviceListItemViewModel()
+        public IpCameraDeviceListItemViewModel()
         {
             this.DeviceName = new ReactiveProperty<string>("")
                 .AddTo(this.disposable);

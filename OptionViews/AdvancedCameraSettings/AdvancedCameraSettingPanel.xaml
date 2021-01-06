@@ -13,7 +13,7 @@
              xmlns:local="clr-namespace:OptionViews.AdvancedCameraSettings"
              xmlns:prism="http://prismlibrary.com/"
              mc:Ignorable="d" 
-             d:DesignHeight="1013.287" d:DesignWidth="2005.245"
+             d:DesignHeight="1000" d:DesignWidth="2000"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <Style
@@ -55,7 +55,6 @@
                   Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -78,140 +77,18 @@
                             Height="30" Width="30"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Command="{Binding AddCameraSettingClick}"
+                            Command="{Binding RefreshDeviceListClick}"
                             Grid.Column="1">
                         <iconPacks:PackIconVaadinIcons Kind="Refresh" />
                     </Button>
                 </Grid>
-                <ContentControl x:Name="CameraLoginSettingRegion"
+                <ContentControl x:Name="CameraListRegion"
                                 Grid.Row="1"
-                                prism:RegionManager.RegionName="CameraLoginSettingRegion"/>
-                <materialDesign:Card Margin="4" 
-                                     Grid.Row="2">
-                    <ListBox x:Name="CameraDeviceList" 
-                             SelectionMode="Single"
-                             ItemsSource="{Binding CameraDeviceListSource}"
-                             SelectedItem="{Binding CameraDeviceSelectedItem.Value, Mode=TwoWay}">
-                        <behaviours:Interaction.Triggers>
-                            <behaviours:EventTrigger EventName="SelectionChanged">
-                                <rp:EventToReactiveCommand Command="{Binding SelectionChangedCameraDeviceList}"/>
-                            </behaviours:EventTrigger>
-                        </behaviours:Interaction.Triggers>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="40"/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock x:Name="CameraDeviceName"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Left"
-                                               Text="{Binding DeviceName.Value, Mode=TwoWay}"
-                                               Grid.Row="0"/>
-                                    <TextBlock x:Name="CameraDeviceIpAddress"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Right"
-                                               Text="{Binding IpAddress.Value, Mode=TwoWay}"
-                                               Grid.Row="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </materialDesign:Card>
+                                prism:RegionManager.RegionName="CameraListRegion"/>
             </Grid>
-            <Grid Grid.Column="1">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition Height="200"/>
-                    </Grid.RowDefinitions>
-                    <Grid Margin="3" Grid.Row="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Style="{StaticResource ChipsHeadline}"
-                                   Text="Preview"
-                                   Grid.Row="0"/>
-                        <Image Grid.Row="3"/>
-                    </Grid>
-                    <Grid Margin="3" 
-                          Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Style="{StaticResource ChipsHeadline}"
-                                   Text="Profile settings"
-                                   Grid.Row="0"/>
-                        <Grid Grid.Row="1">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="1">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="50"/>
-                                            <RowDefinition Height="50"/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="200"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Profile token" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                            <ComboBox VerticalAlignment="Center"
-                                                      HorizontalAlignment="Right"
-                                                      Width="100"
-                                                      Grid.Column="1"></ComboBox>
-                                        </Grid>
-                                        <Grid Grid.Row="1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="200"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Frame rate" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                            <metroControl:NumericUpDown VerticalAlignment="Center"
-                                                                        HorizontalAlignment="Right"
-                                                                        Minimum="0"
-                                                                        Maximum="10000"
-                                                                        Interval="1"
-                                                                        Grid.Column="1"/>
-                                        </Grid>
-                                        <Grid Grid.Row="2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="200"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Bitrate" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                            <metroControl:NumericUpDown VerticalAlignment="Center" 
-                                                                        HorizontalAlignment="Right"
-                                                                        Minimum="0"
-                                                                        Maximum="10000"
-                                                                        Interval="1"
-                                                                        Grid.Column="1"/>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
+            <ContentControl x:Name="CameraSettingRegion"
+                            Grid.Column="1"
+                            prism:RegionManager.RegionName="CameraSettingRegion"/>
         </Grid>
         <Grid Grid.Row="2"
               VerticalAlignment="Center">
