@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionViews", "OptionViews\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSCRLib", "OpenSCRLib\OpenSCRLib.csproj", "{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowUsbCameraClient", "DirectShowUsbCameraClient\DirectShowUsbCameraClient.csproj", "{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

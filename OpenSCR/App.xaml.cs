@@ -57,7 +57,5 @@ namespace OpenSCR
             containerRegistry.RegisterInstance(this.Container);
             containerRegistry.RegisterInstance(typeof(DatabaseAccesser), new DatabaseAccesser());
         }
-
-
     }
 }

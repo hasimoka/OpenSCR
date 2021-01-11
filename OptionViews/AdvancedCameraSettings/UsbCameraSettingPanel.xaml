@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:metroControl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:OptionViews.AdvancedCameraSettings"
              mc:Ignorable="d" 
@@ -28,13 +30,12 @@
             <Grid Margin="3" Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
-                    <RowDefinition Height="25"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource ChipsHeadline}"
                                    Text="Preview"
                                    Grid.Row="0"/>
-                <Image Grid.Row="3"/>
+                <Image x:Name="CameraImage" Stretch="Uniform" Source="{Binding FrameImage.Value}" Grid.Row="2"/>
             </Grid>
             <Grid Margin="3" 
                           Grid.Row="1">
@@ -52,40 +53,48 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Column="1">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid Grid.Row="0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="200"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Resolution" 
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Resolution / FrameRate" 
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Left"
                                                Grid.Column="0"/>
-                                    <ComboBox VerticalAlignment="Center"
+                                <ComboBox materialDesign:ComboBoxAssist.ShowSelectedItem="True" 
+                                              VerticalAlignment="Center"
                                               HorizontalAlignment="Right"
-                                              Width="100"
-                                              Grid.Column="1"></ComboBox>
-                                </Grid>
-                                <Grid Grid.Row="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="200"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Frame rate" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                    <ComboBox VerticalAlignment="Center"
-                                              HorizontalAlignment="Right"
-                                              Width="100"
-                                              Grid.Column="1"></ComboBox>
-                                </Grid>
+                                              MinWidth="100"
+                                              ItemsSource="{Binding UsbCameraVideoInfoItems}"
+                                              SelectedItem="{Binding SelectedUsbCameraVideoInfo.Value, Mode=TwoWay}"
+                                              Grid.Column="1">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Border Background="#8093F1" CornerRadius="3" Margin="2">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <TextBlock Text="{Binding Path=Width}" Margin="2" Foreground="#F4F4ED"/>
+                                                        <TextBlock Text="x" Foreground="#F4F4ED"/>
+                                                        <TextBlock Text="{Binding Path=Height}" Margin="2" Foreground="#F4F4ED"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Background="#AADDAA" CornerRadius="3" Width="30" Margin="2">
+                                                    <TextBlock Text="{Binding Path=BitCount}" Margin="2"  TextAlignment="Center" Foreground="#F4F4ED"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="SelectionChanged">
+                                            <prism:InvokeCommandAction Command="{Binding ResolutionAndFrameRateItemSelectionChanged}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ComboBox>
                             </Grid>
                         </Grid>
                     </Grid>

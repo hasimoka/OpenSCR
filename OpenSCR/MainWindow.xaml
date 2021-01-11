@@ -5,6 +5,8 @@
         xmlns:bh="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:metroControl="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:livet="http://schemas.livet-mvvm.net/2011/wpf"
         xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
@@ -35,7 +37,15 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-    <metro:HamburgerMenu Grid.Column="0"
+    <materialDesign:DialogHost IsOpen="{Binding IsProgressRingDialogOpen.Value, Mode=TwoWay}">
+        <materialDesign:DialogHost.DialogContent>
+            <Grid>
+                <metroControl:ProgressRing IsActive="True" 
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center"/>
+            </Grid>
+        </materialDesign:DialogHost.DialogContent>
+        <metro:HamburgerMenu Grid.Column="0"
  						 ItemTemplate="{StaticResource MenuData}"
  						 OptionsItemTemplate="{StaticResource MenuData}"
  						 ItemsSource="{Binding MenuItems}"
@@ -48,13 +58,14 @@
  						 SelectedIndex="{Binding SelectedMenuIndex.Value, Mode=TwoWay}"
  						 SelectedOptionsItem="{Binding SelectedOption.Value, Mode=TwoWay}"
  						 SelectedOptionsIndex="{Binding SelectedOptionIndex.Value, Mode=TwoWay}">
-        <metro:HamburgerMenu.Content>
-            <Grid>
-                <metro:TransitioningContentControl x:Name="ContentRegion"
+            <metro:HamburgerMenu.Content>
+                <Grid>
+                    <metro:TransitioningContentControl x:Name="ContentRegion"
 												   Grid.Row="1"
 												   prism:RegionManager.RegionName="ContentRegion"
 												   Transition="{Binding ContentControlTransition.Value}"/>
-            </Grid>
-        </metro:HamburgerMenu.Content>
-    </metro:HamburgerMenu>
+                </Grid>
+            </metro:HamburgerMenu.Content>
+        </metro:HamburgerMenu>
+    </materialDesign:DialogHost>
 </metro:MetroWindow>

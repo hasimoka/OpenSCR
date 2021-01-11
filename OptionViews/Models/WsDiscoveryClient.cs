@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace OptionViews.Models
 {
-    public class WsDiscoveryClient : IDisposable
+    public class WsDiscoveryClient : IWsDiscoveryClient
     {
         private DiscoveryClient discoveryClient;
 
@@ -13,16 +13,17 @@ namespace OptionViews.Models
 
         private Action<IpCameraDeviceInfo> deviceDiscoveriedAction;
 
-        public WsDiscoveryClient(Action<IpCameraDeviceInfo> deviceDiscoveriedAction)
+        public WsDiscoveryClient()
         {
-            this.deviceDiscoveriedAction = deviceDiscoveriedAction;
 
             var endPoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
-            discoveryClient = new DiscoveryClient(endPoint);
-            discoveryClient.FindProgressChanged += DiscoveryClient_FindProgressChanged;
-            discoveryClient.FindCompleted += DiscoveryClient_FindCompleted;
+            this.discoveryClient = new DiscoveryClient(endPoint);
+            this.discoveryClient.FindProgressChanged += DiscoveryClient_FindProgressChanged;
+            this.discoveryClient.FindCompleted += DiscoveryClient_FindCompleted;
 
             this.userState = null;
+
+            this.deviceDiscoveriedAction = null;
         }
 
         public void Dispose()
@@ -34,8 +35,15 @@ namespace OptionViews.Models
             }
         }
 
-        public void FindNetworkVideoTransmitterAsync()
+        public void FindNetworkVideoTransmitterAsync(Action<IpCameraDeviceInfo> deviceDiscoveriedAction)
         {
+            this.deviceDiscoveriedAction = deviceDiscoveriedAction;
+
+            var endPoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
+            this.discoveryClient = new DiscoveryClient(endPoint);
+            this.discoveryClient.FindProgressChanged += DiscoveryClient_FindProgressChanged;
+            this.discoveryClient.FindCompleted += DiscoveryClient_FindCompleted;
+
             FindCriteria findCriteria = new FindCriteria();
             findCriteria.Duration = TimeSpan.MaxValue;
             findCriteria.MaxResults = int.MaxValue;
@@ -75,13 +83,17 @@ namespace OptionViews.Models
                         }
                     }
 
-                    this.deviceDiscoveriedAction(deviceInfo);
+                    if (this.deviceDiscoveriedAction != null)
+                        this.deviceDiscoveriedAction(deviceInfo);
                 }
             }
         }
 
         private void DiscoveryClient_FindCompleted(object sender, FindCompletedEventArgs e)
         {
+            this.discoveryClient.Close();
+            this.discoveryClient = null;
+
             if (this.userState != null)
                 this.userState = null;
         }

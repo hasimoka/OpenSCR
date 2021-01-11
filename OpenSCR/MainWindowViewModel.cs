@@ -8,6 +8,7 @@ using Prism.Regions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using MainWindowServices;
+using System.Web.UI;
 
 namespace OpenSCR
 {
@@ -42,6 +43,10 @@ namespace OpenSCR
 
 		/// <summary>HamburgerMenuのオプションメニュー項目を取得します。</summary>
 		public ObservableCollection<HamburgerMenuItemViewModel> OptionMenuItems { get; } = new ObservableCollection<HamburgerMenuItemViewModel>();
+
+		public ReactiveProperty<UserControl> DialogView { get; }
+
+		public ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
 
 		private string _title = "Prism Application";
 		/// <summary>Windowのタイトルを取得・設定します。</summary>
@@ -110,6 +115,12 @@ namespace OpenSCR
 
 			this.ContentRendered = new ReactiveCommand()
 				.WithSubscribe(() => this.regionManager.RequestNavigate("ContentRegion", "StartUpPanel"))
+				.AddTo(this.disposable);
+
+			this.DialogView = new ReactiveProperty<UserControl>()
+				.AddTo(this.disposable);
+
+			this.IsProgressRingDialogOpen = this.mainWindowService.IsProgressRingDialogOpen
 				.AddTo(this.disposable);
 		}
 

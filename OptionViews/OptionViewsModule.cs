@@ -2,7 +2,9 @@
 using OptionViews.CameraLoginSettings;
 using OptionViews.CameraLogoutSettings;
 using OptionViews.CammeraCommons;
+using OptionViews.Models;
 using OptionViews.OptionCommons;
+using OptionViews.Services;
 using Prism.Ioc;
 using Prism.Modularity;
 using System;
@@ -22,6 +24,8 @@ namespace OptionViews
 
 		public void RegisterTypes(IContainerRegistry containerRegistry)
 		{
+			containerRegistry.RegisterSingleton<IUsbCameraSettingService, UsbCameraSettingService>();
+
 			containerRegistry.RegisterForNavigation<OptionCommonPanel, OptionCommonPanelViewModel>();
 			containerRegistry.RegisterForNavigation<CameraCommonPanel, CameraCommonPanelViewModel>();
 			containerRegistry.RegisterForNavigation<AdvancedCameraSettingPanel, AdvancedCameraSettingPanelViewModel>();
@@ -31,7 +35,6 @@ namespace OptionViews
 			containerRegistry.RegisterForNavigation<UsbCameraListPanel, UsbCameraListPanelViewModel>();
 			containerRegistry.RegisterForNavigation<IpCameraSettingPanel, IpCameraSettingPanelViewModel>();
 			containerRegistry.RegisterForNavigation<UsbCameraSettingPanel, UsbCameraSettingPanelViewModel>();
-
 		}
 	}
 }

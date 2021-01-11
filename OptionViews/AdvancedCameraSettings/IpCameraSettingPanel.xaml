@@ -7,6 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:OptionViews.AdvancedCameraSettings"
              mc:Ignorable="d" 
@@ -65,45 +66,76 @@
                                         <ColumnDefinition Width="200"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Profile token" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                    <ComboBox VerticalAlignment="Center"
-                                                      HorizontalAlignment="Right"
-                                                      Width="100"
-                                                      Grid.Column="1"></ComboBox>
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0"/>
+                                    <ComboBox materialDesign:ComboBoxAssist.ShowSelectedItem="True" 
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Right"
+                                              MinWidth="150"
+                                              ItemsSource="{Binding IpCameraProfileItems}"
+                                              SelectedItem="{Binding SelectedIpCameraProfile.Value, Mode=TwoWay}"
+                                              Grid.Column="1">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border Background="#F7AEF8" CornerRadius="3" Margin="2">
+                                                        <TextBlock Text="{Binding Path=Encoding}" Margin="2" Foreground="#F4F4ED"/>
+                                                    </Border>
+                                                    <Border Background="#8093F1" CornerRadius="3" Margin="2">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Path=VideoWidth}" Margin="2" Foreground="#F4F4ED"/>
+                                                            <TextBlock Text="x" Foreground="#F4F4ED"/>
+                                                            <TextBlock Text="{Binding Path=VideoHeight}" Margin="2" Foreground="#F4F4ED"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Path=ProfileToken}" 
+                                                               Margin="2"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="SelectionChanged">
+                                                <prism:InvokeCommandAction Command="{Binding ChangeSelectedIpCameraProfile}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </ComboBox>
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="200"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Frame rate" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                    <metroControl:NumericUpDown VerticalAlignment="Center"
-                                                                        HorizontalAlignment="Right"
-                                                                        Minimum="0"
-                                                                        Maximum="10000"
-                                                                        Interval="1"
-                                                                        Grid.Column="1"/>
+                                    <TextBlock Text="Frame rate limit" 
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0"/>
+                                    <metroControl:NumericUpDown MinWidth="150"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right"
+                                                                Minimum="0"
+                                                                Maximum="10000"
+                                                                Interval="1"
+                                                                Value="{Binding FrameRateLimit.Value, Mode=TwoWay}"
+                                                                Grid.Column="1"/>
                                 </Grid>
                                 <Grid Grid.Row="2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="200"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Bitrate" 
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Left"
-                                                       Grid.Column="0"/>
-                                    <metroControl:NumericUpDown VerticalAlignment="Center" 
-                                                                        HorizontalAlignment="Right"
-                                                                        Minimum="0"
-                                                                        Maximum="10000"
-                                                                        Interval="1"
-                                                                        Grid.Column="1"/>
+                                    <TextBlock Text="Bitrate limit" 
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Grid.Column="0"/>
+                                    <metroControl:NumericUpDown MinWidth="150"
+                                                                VerticalAlignment="Center" 
+                                                                HorizontalAlignment="Right"
+                                                                Minimum="0"
+                                                                Maximum="10000"
+                                                                Interval="1"
+                                                                Value="{Binding BitrateLimit.Value, Mode=TwoWay}"
+                                                                Grid.Column="1"/>
                                 </Grid>
                             </Grid>
                         </Grid>

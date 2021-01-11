@@ -13,17 +13,20 @@ namespace MainWindowServices
 	/// </summary>
 	public class MainWindowService : BindableModelBase, IMainWindowService
 	{
-		/// <summary>HamburgerMenuのDisplayModeを取得・設定します。</summary>
+		/// <summary>HamburgerMenuのDisplayModeを取得・設定します</summary>
 		public ReactivePropertySlim<SplitViewDisplayMode> HamburgerMenuDisplayMode { get; set; }
 
-		/// <summary>HamburgerMenuのIsPaneOpenを取得・設定します。</summary>
+		/// <summary>HamburgerMenuのIsPaneOpenを取得・設定します</summary>
 		public ReactivePropertySlim<bool> IsHamburgerMenuPanelOpened { get; set; }
 
-		/// <summary>TransitioningContentControlのTransitionを取得・設定します。</summary>
+		/// <summary>TransitioningContentControlのTransitionを取得・設定します</summary>
 		public ReactivePropertySlim<TransitionType> ContentControlTransition { get; set; }
 
+		/// <summary>ProgressRingDialogのIsOpenを取得・設定します</summary>
+		public ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
+
 		/// <summary>
-		/// コンストラクタ。
+		/// コンストラクタ
 		/// </summary>
 		public MainWindowService()
 		{
@@ -32,6 +35,9 @@ namespace MainWindowServices
 			this.IsHamburgerMenuPanelOpened = new ReactivePropertySlim<bool>(false)
 				.AddTo(this.Disposable);
 			this.ContentControlTransition = new ReactivePropertySlim<TransitionType>(TransitionType.Default)
+				.AddTo(this.Disposable);
+
+			this.IsProgressRingDialogOpen = new ReactivePropertySlim<bool>(false)
 				.AddTo(this.Disposable);
 		}
 	}

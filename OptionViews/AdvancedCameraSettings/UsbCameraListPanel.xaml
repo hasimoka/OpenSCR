@@ -29,21 +29,12 @@
                 </behaviours:Interaction.Triggers>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                        <Grid Height="60">
                             <TextBlock x:Name="CameraDeviceName"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Left"
                                        Text="{Binding DeviceName.Value, Mode=TwoWay}"
                                        Grid.Row="0"/>
-                            <TextBlock x:Name="CameraDeviceIpAddress"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Text="{Binding IpAddress.Value, Mode=TwoWay}"
-                                       Grid.Row="1"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

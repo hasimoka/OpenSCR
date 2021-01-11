@@ -287,6 +287,9 @@
       <DependentUpon>CameraCommonPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="CammeraCommons\CameraCommonPanelViewModel.cs" />
+    <Compile Include="Models\IpCameraProfile.cs" />
+    <Compile Include="Models\IWsDiscoveryClient.cs" />
+    <Compile Include="Models\OnvifInfoClient.cs" />
     <Compile Include="Models\WsDiscoveryClient.cs" />
     <Compile Include="OptionCommons\OptionCommonPanel.xaml.cs">
       <DependentUpon>OptionCommonPanel.xaml</DependentUpon>
@@ -294,6 +297,8 @@
     <Compile Include="OptionCommons\OptionCommonPanelViewModel.cs" />
     <Compile Include="OptionViewsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IUsbCameraSettingService.cs" />
+    <Compile Include="Services\UsbCameraSettingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -342,9 +347,21 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DirectShowUsbCameraClient\DirectShowUsbCameraClient.csproj">
+      <Project>{7c3968f9-7ebb-4a30-b50c-cde22d1ce7a6}</Project>
+      <Name>DirectShowUsbCameraClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HalationGhostModelBase\HalationGhostModelBase.csproj">
+      <Project>{0e014fe6-4f62-4da4-abf0-0406db81f989}</Project>
+      <Name>HalationGhostModelBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HalationGhostWpfViewModels\HalationGhostWpfViewModels.csproj">
       <Project>{aeaea0c6-0622-4216-bb8f-85f717bc28ee}</Project>
       <Name>HalationGhostWpfViewModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MainWindowServices\MainWindowServices.csproj">
+      <Project>{a23c1591-e241-45b6-888f-9a90fe9f4773}</Project>
+      <Name>MainWindowServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenSCRLib\OpenSCRLib.csproj">
       <Project>{e91f8d02-325d-4cd7-8457-7b1b9c8b37d9}</Project>
