@@ -24,16 +24,17 @@ namespace OptionViews
 
 		public void RegisterTypes(IContainerRegistry containerRegistry)
 		{
+			containerRegistry.RegisterSingleton<INetworkCameraSettingService, NetworkCameraSettingService>();
 			containerRegistry.RegisterSingleton<IUsbCameraSettingService, UsbCameraSettingService>();
 
 			containerRegistry.RegisterForNavigation<OptionCommonPanel, OptionCommonPanelViewModel>();
 			containerRegistry.RegisterForNavigation<CameraCommonPanel, CameraCommonPanelViewModel>();
 			containerRegistry.RegisterForNavigation<AdvancedCameraSettingPanel, AdvancedCameraSettingPanelViewModel>();
-			containerRegistry.RegisterForNavigation<IpCameraListPanel, IpCameraListPanelViewModel>();
+			containerRegistry.RegisterForNavigation<IpCameraListPanel, NetworkCameraListPanelViewModel>();
 			containerRegistry.RegisterForNavigation<CameraLoginSettingPanel, CameraLoginSettingPanelViewModel>();
 			containerRegistry.RegisterForNavigation<CameraLogoutSettingPanel, CameraLogoutSettingPanelViewModel>();
 			containerRegistry.RegisterForNavigation<UsbCameraListPanel, UsbCameraListPanelViewModel>();
-			containerRegistry.RegisterForNavigation<IpCameraSettingPanel, IpCameraSettingPanelViewModel>();
+			containerRegistry.RegisterForNavigation<IpCameraSettingPanel, NetworkCameraSettingPanelViewModel>();
 			containerRegistry.RegisterForNavigation<UsbCameraSettingPanel, UsbCameraSettingPanelViewModel>();
 		}
 	}

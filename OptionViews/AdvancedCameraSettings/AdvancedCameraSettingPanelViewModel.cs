@@ -49,24 +49,12 @@ namespace OptionViews.AdvancedCameraSettings
 
         public ReactiveCommand ChangeSelectedCameraType { get; }
 
-        public void SetIpCameraSetting(List<IpCameraProfile> profiles)
-        {
-            if (this.SelectedCameraType.Value.Type == CameraType.IpCamera)
-            {
-                Console.WriteLine($"profiles: {profiles}");
-                var view = this.regionManager.Regions["CameraSettingRegion"].ActiveViews.FirstOrDefault() as IpCameraSettingPanel;
-                var viewModel = view.DataContext as IpCameraSettingPanelViewModel;
-
-                viewModel.SetSetting(profiles);
-            }
-        }
-
         private void onRefreshDeviceListClick()
         {
             if (this.SelectedCameraType.Value.Type == CameraType.IpCamera)
             {
                 var view = this.regionManager.Regions["CameraListRegion"].ActiveViews.FirstOrDefault() as IpCameraListPanel;
-                var viewModel = view.DataContext as IpCameraListPanelViewModel;
+                var viewModel = view.DataContext as NetworkCameraListPanelViewModel;
                 viewModel.RefreshCameraList();
             }
             else if (this.SelectedCameraType.Value.Type == CameraType.UsbCamera)

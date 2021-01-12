@@ -35,7 +35,7 @@
                 <TextBlock Style="{StaticResource ChipsHeadline}"
                                    Text="Preview"
                                    Grid.Row="0"/>
-                <Image x:Name="CameraImage" Stretch="Uniform" Source="{Binding FrameImage.Value}" Grid.Row="2"/>
+                <Image x:Name="CameraImage" Stretch="Uniform" Source="{Binding FrameImage.Value}" Grid.Row="1"/>
             </Grid>
             <Grid Margin="3" 
                           Grid.Row="1">

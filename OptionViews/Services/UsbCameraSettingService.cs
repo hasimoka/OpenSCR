@@ -1,4 +1,4 @@
-﻿using DirectShowUsbCameraClient;
+﻿using DirectShowCameraClient.Models;
 using HalationGhost;
 using OpenSCRLib;
 using OptionViews.AdvancedCameraSettings;
@@ -6,10 +6,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace OptionViews.Services
@@ -19,13 +15,13 @@ namespace OptionViews.Services
     /// </summary>
     public class UsbCameraSettingService : BindableModelBase, IUsbCameraSettingService
     {
-        private UsbCameraClient client;
+        private UsbCameraClient cameraClient;
 
         public UsbCameraSettingService()
         {
-            this.client = new UsbCameraClient();
+            this.cameraClient = new UsbCameraClient();
 
-            this.FrameImage = this.client.FrameImage
+            this.FrameImage = this.cameraClient.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(this.Disposable);
 
@@ -59,21 +55,21 @@ namespace OptionViews.Services
 
         public void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction)
         {
-            this.client.FindUsbCaptureDeviceAsync(discoveriedAction);
+            this.cameraClient.FindUsbCaptureDeviceAsync(discoveriedAction);
         }
 
         public List<UsbCameraVideoInfo> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
         {
-            return this.client.GetVideoInfosAsync(captureDevice);
+            return this.cameraClient.GetVideoInfosAsync(captureDevice);
         }
 
         public void StartCapture()
         {
-            this.client.StartCapture(
+            this.cameraClient.StartCapture(
                 this.CameraDeviceSelectedItem.Value.CaptureDevice.DevicePath, 
                 this.SelectedUsbCameraVideoInfo.Value.Width,
                 this.SelectedUsbCameraVideoInfo.Value.Height,
-                this.SelectedUsbCameraVideoInfo.Value.BitCount); ;
+                this.SelectedUsbCameraVideoInfo.Value.BitCount);
         }
     }
 }

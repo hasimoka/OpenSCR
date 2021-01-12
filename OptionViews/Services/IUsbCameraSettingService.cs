@@ -1,4 +1,4 @@
-﻿using DirectShowUsbCameraClient;
+﻿using DirectShowCameraClient;
 using OpenSCRLib;
 using OptionViews.AdvancedCameraSettings;
 using Reactive.Bindings;
