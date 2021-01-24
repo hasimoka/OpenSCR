@@ -21,8 +21,6 @@ namespace OptionViews.AdvancedCameraSettings
 
         private IUsbCameraSettingService usbCameraSettingService;
 
-        private Action<UsbCameraDeviceInfo> cameraDiscoveryedAction;
-
         public UsbCameraListPanelViewModel(IRegionManager regionMan, IContainerProvider containerProvider, IMainWindowService windowService, IUsbCameraSettingService cameraSettingService) : base(regionMan)
         {
             this.container = containerProvider;
@@ -35,33 +33,50 @@ namespace OptionViews.AdvancedCameraSettings
             this.CameraDeviceSelectedItem = this.usbCameraSettingService.CameraDeviceSelectedItem
                 .AddTo(this.disposable);
 
-            this.SelectionChangedCameraDeviceList = new ReactiveCommand<SelectionChangedEventArgs>()
-                .WithSubscribe((item) => 
-                {
-                    // ProgressRingダイアログを表示にする(onSelectionChangedCameraDeviceListAsync()終了時に非表示にする)
-                    this.IsProgressRingDialogOpen.Value = true;
-                    this.onSelectionChangedCameraDeviceListAsync(item);
-                })
-                .AddTo(this.disposable);
-
             this.IsProgressRingDialogOpen = this.mainWindowService.IsProgressRingDialogOpen
                 .AddTo(this.disposable);
 
-            this.cameraDiscoveryedAction = (cameraDeviceInfo) =>
-            {
-                var item = this.container.Resolve<UsbCameraDeviceListItemViewModel>();
-                item.CaptureDevice = cameraDeviceInfo;
+            this.CanSelectionChangedCameraDeviceListCommand = new ReactiveProperty<bool>(true)
+                .AddTo(this.disposable);
 
-                this.CameraDeviceListSource.Add(item);
-            };
-            this.usbCameraSettingService.FindCaptureDeviceAsync(cameraDiscoveryedAction);
+            this.SelectionChangedCameraDeviceListCommand = this.CanSelectionChangedCameraDeviceListCommand
+                .ToAsyncReactiveCommand<SelectionChangedEventArgs>()
+                .WithSubscribe(async (item) =>
+                {
+                    // ProgressRingダイアログを表示にする
+                    this.IsProgressRingDialogOpen.Value = true;
+
+                    await this.onSelectionChangedCameraDeviceListAsync(item);
+
+                    // ProgressRingダイアログを非表示にする
+                    this.IsProgressRingDialogOpen.Value = false;
+                })
+                .AddTo(this.disposable);
+
+            this.SetInitializeParameterCommand = this.CanSelectionChangedCameraDeviceListCommand
+                .ToAsyncReactiveCommand<UsbCameraSetting>()
+                .WithSubscribe(async (usbCameraSetting) =>
+                {
+                    // ProgressRingダイアログを表示にする
+                    this.IsProgressRingDialogOpen.Value = true;
+
+                    await this.onSetInitializeParameterCommand(usbCameraSetting);
+
+                    // ProgressRingダイアログを非表示にする
+                    this.IsProgressRingDialogOpen.Value = false;
+                })
+                .AddTo(this.disposable);
         }
 
         public ReactiveCollection<UsbCameraDeviceListItemViewModel> CameraDeviceListSource { get; }
 
         public ReactiveProperty<UsbCameraDeviceListItemViewModel> CameraDeviceSelectedItem { get; set; }
 
-        public ReactiveCommand<SelectionChangedEventArgs> SelectionChangedCameraDeviceList { get; }
+        public ReactiveProperty<bool> CanSelectionChangedCameraDeviceListCommand { get; }
+
+        public AsyncReactiveCommand<SelectionChangedEventArgs> SelectionChangedCameraDeviceListCommand { get; }
+
+        public AsyncReactiveCommand<UsbCameraSetting> SetInitializeParameterCommand { get; }
 
         public ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
 
@@ -71,16 +86,11 @@ namespace OptionViews.AdvancedCameraSettings
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            //this.RefreshCameraList();
+            var usbCameraSetting = navigationContext.Parameters["UsbCameraSetting"] as UsbCameraSetting;
+            this.SetInitializeParameterCommand.Execute(usbCameraSetting);
         }
 
-        public void RefreshCameraList()
-        {
-            this.CameraDeviceListSource.Clear();
-            this.usbCameraSettingService.FindCaptureDeviceAsync(this.cameraDiscoveryedAction);
-        }
-
-        private async void onSelectionChangedCameraDeviceListAsync(SelectionChangedEventArgs args)
+        private async Task onSelectionChangedCameraDeviceListAsync(SelectionChangedEventArgs args)
         {
             Console.WriteLine($"Call onSelectionChangedCameraDeviceList() method. [args:{args}]");
 
@@ -90,10 +100,7 @@ namespace OptionViews.AdvancedCameraSettings
                 {
                     // 接続するカメラの解像度・ビットレートを取得する
                     var captureDevice = this.CameraDeviceSelectedItem.Value.CaptureDevice;
-                    var videoInfos = await Task.Run(() =>
-                    {
-                       return this.usbCameraSettingService.GetVideoInfosAsync(captureDevice);
-                    });
+                    var videoInfos = await this.usbCameraSettingService.GetVideoInfosAsync(captureDevice);
 
                     // UsbCameraSettingPanelに取得したカメラ解像度・ビットレートを反映させる
                     this.usbCameraSettingService.UsbCameraVideoInfoItems.Clear();
@@ -113,9 +120,82 @@ namespace OptionViews.AdvancedCameraSettings
                 this.usbCameraSettingService.UsbCameraVideoInfoItems.Clear();
                 this.usbCameraSettingService.SelectedUsbCameraVideoInfo.Value = null;
             }
+        }
 
-            // ProgressRingダイアログを非表示にする
-            this.IsProgressRingDialogOpen.Value = false;
+        private async Task onSetInitializeParameterCommand(UsbCameraSetting usbCameraSetting)
+        {
+            // 現在の設定をすべてクリアする
+            this.usbCameraSettingService.Clear();
+
+            if (usbCameraSetting != null)
+            {
+                try
+                {
+                    var captureDevices = await this.usbCameraSettingService.DiscoveryCaptureDeviceAsync();
+                    foreach (var captureDevice in captureDevices.OrderBy(captureDevice => captureDevice.Name))
+                    {
+
+                        var item = this.container.Resolve<UsbCameraDeviceListItemViewModel>();
+                        item.CaptureDevice = captureDevice;
+
+                        this.CameraDeviceListSource.Add(item);
+
+                        if (captureDevice.DevicePath == usbCameraSetting.DevicePath)
+                        {
+                            this.CameraDeviceSelectedItem.Value = item;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                // 制御を一旦手放して、SelectionChangedEventを発火させる
+                // ※イベントは発火するが、ReactiveCommandのCanExecuteがfalseになっているのでコマンドは実行されない
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
+
+                try
+                {
+                    // 接続するカメラのビデオ情報を取得する
+                    var videoInfos = await this.usbCameraSettingService.GetVideoInfosAsync(this.CameraDeviceSelectedItem.Value.CaptureDevice);
+
+                    foreach (var videoInfo in videoInfos.OrderByDescending(x => x.Width).ThenBy(x => x.Height).ThenBy(x => x.BitCount))
+                    {
+                        this.usbCameraSettingService.UsbCameraVideoInfoItems.Add(videoInfo);
+
+                        if (videoInfo.Width == usbCameraSetting.CameraWidth && videoInfo.Height == usbCameraSetting.CameraHeight && videoInfo.BitCount == usbCameraSetting.FrameRate)
+                        {
+                            this.usbCameraSettingService.SelectedUsbCameraVideoInfo.Value = videoInfo;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+            else
+            {
+                this.regionManager.RequestNavigate("CameraLoginSettingRegion", "CameraLoginSettingPanel");
+
+                try
+                {
+                    var captureDevices = await this.usbCameraSettingService.DiscoveryCaptureDeviceAsync();
+                    foreach (var captureDevice in captureDevices.OrderBy(captureDevice => captureDevice.Name))
+                    {
+
+                        var item = this.container.Resolve<UsbCameraDeviceListItemViewModel>();
+                        item.CaptureDevice = captureDevice;
+
+                        this.CameraDeviceListSource.Add(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
         }
     }
 }

@@ -20,16 +20,24 @@ namespace OptionViews.Services
 
         ReactiveProperty<UsbCameraDeviceListItemViewModel> CameraDeviceSelectedItem { get; set; }
 
-        ReactiveProperty<UsbCameraDeviceInfo> SelectedUsbCameraDeviceInfo { get; set; }
-
         ReactiveCollection<UsbCameraVideoInfo> UsbCameraVideoInfoItems { get; set; }
 
         ReactiveProperty<UsbCameraVideoInfo> SelectedUsbCameraVideoInfo { get; set; }
 
+        ReactivePropertySlim<bool> CanSelectionChangedCameraDeviceListCommand { get; }
+
+        void Clear();
+
+        Task RefreshCameraList();
+
         void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction);
 
-        List<UsbCameraVideoInfo> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice);
+        Task<List<UsbCameraDeviceInfo>> DiscoveryCaptureDeviceAsync();
+
+        Task<List<UsbCameraVideoInfo>> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice);
 
         void StartCapture();
+
+        void StopCapture();
     }
 }

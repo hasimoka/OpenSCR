@@ -101,6 +101,7 @@
     <Compile Include="Models\IWsDiscoveryClient.cs" />
     <Compile Include="Models\NetworkCameraClient.cs" />
     <Compile Include="Models\IVideoSource.cs" />
+    <Compile Include="Models\PtzDirection.cs" />
     <Compile Include="Models\RawFramesDecoding\DecodedFrames\DecodedVideoFrame.cs" />
     <Compile Include="Models\RawFramesDecoding\DecoderException.cs" />
     <Compile Include="Models\RawFramesDecoding\H264VideoDecoder.cs" />

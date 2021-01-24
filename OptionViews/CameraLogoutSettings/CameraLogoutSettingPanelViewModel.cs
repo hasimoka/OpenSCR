@@ -1,5 +1,6 @@
 ﻿using HalationGhost.WinApps;
 using OpenSCRLib;
+using OptionViews.Services;
 using Prism.Ioc;
 using Prism.Regions;
 using Reactive.Bindings;
@@ -14,20 +15,16 @@ namespace OptionViews.CameraLogoutSettings
 {
     class CameraLogoutSettingPanelViewModel : HalationGhostViewModelBase, INavigationAware
     {
-        public ReactiveProperty<string> CameraLoginAnnouncement { get; }
+        private IContainerProvider container;
 
-        public ReactiveCommand LogoutCameraClick { get; }
+        private INetworkCameraSettingService networkCameraSettingServer;
 
-        private IContainerProvider container = null;
-
-        public CameraLogoutSettingPanelViewModel(IRegionManager regionMan, IContainerProvider injectionContainer) : base(regionMan)
+        public CameraLogoutSettingPanelViewModel(IRegionManager regionMan, IContainerProvider injectionContainer, INetworkCameraSettingService networkCameraSettingServer) : base(regionMan)
         {
             this.container = injectionContainer;
+            this.networkCameraSettingServer = networkCameraSettingServer;
 
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
-            var cameraLoginInfo = dbAccessor.GetCameraLoginInfo();
-
-            this.CameraLoginAnnouncement = new ReactiveProperty<string>(this.GetCameraLoginMessage(cameraLoginInfo.Name))
+            this.CameraLoginAnnouncement = new ReactiveProperty<string>(this.GetCameraLoginMessage(this.networkCameraSettingServer.UserName.Value))
                 .AddTo(this.disposable);
             
             this.LogoutCameraClick = new ReactiveCommand()
@@ -35,24 +32,20 @@ namespace OptionViews.CameraLogoutSettings
                 .AddTo(this.disposable);
         }
 
+        public ReactiveProperty<string> CameraLoginAnnouncement { get; }
+
+        public ReactiveCommand LogoutCameraClick { get; }
+
         private void onLogoutCameraClick()
         {
             // ログイン状態を「ログアウト」に変更する
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
-            var camearLoginInfo = dbAccessor.GetCameraLoginInfo();
-            camearLoginInfo.IsLoggedIn = false;
-
-            dbAccessor.SetCameraLoginInfo(camearLoginInfo);
-
+            this.networkCameraSettingServer.IsLoggedIn.Value = false;
             this.regionManager.RequestNavigate("CameraLoginSettingRegion", "CameraLoginSettingPanel");
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
-            var camearLoginInfo = dbAccessor.GetCameraLoginInfo();
-
-            this.CameraLoginAnnouncement.Value = this.GetCameraLoginMessage(camearLoginInfo.Name);
+            this.CameraLoginAnnouncement.Value = this.GetCameraLoginMessage(this.networkCameraSettingServer.UserName.Value);
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) { return true; }

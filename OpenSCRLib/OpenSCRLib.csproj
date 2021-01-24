@@ -38,6 +38,7 @@
       <HintPath>..\packages\OnvifClient.Core.1.0.2\lib\netstandard2.0\Mictlanix.DotNet.OnvifClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime" />
@@ -65,12 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CameraSetting.cs" />
     <Compile Include="IpCameraDeviceInfo.cs" />
     <Compile Include="CameraLoginInfo.cs" />
     <Compile Include="DatabaseAccesser.cs" />
+    <Compile Include="NetworkCameraEndpoint.cs" />
+    <Compile Include="NetworkCameraSetting.cs" />
+    <Compile Include="NullObjectValidationAttribute.cs" />
     <Compile Include="OnvifNetworkCameraProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UsbCameraDeviceInfo.cs" />
+    <Compile Include="UsbCameraSetting.cs" />
     <Compile Include="UsbCameraVideoInfo.cs" />
   </ItemGroup>
   <ItemGroup>

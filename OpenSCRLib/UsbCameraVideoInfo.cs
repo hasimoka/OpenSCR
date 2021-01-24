@@ -23,7 +23,7 @@ namespace OpenSCRLib
 
         public override string ToString()
         {
-            return $"Width: {this.Width}, Height: {this.Height}, BitCount: {this.BitCount}";
+            return $"UsbCameraVideoInfo(Width={this.Width}, Height={this.Height}, BitCount={this.BitCount}";
         }
     }
 }

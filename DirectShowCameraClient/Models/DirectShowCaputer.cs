@@ -273,6 +273,22 @@ namespace DirectShowCameraClient.Models
             this.CloseInterfaces();
         }
 
+        public void ClearFrameImage()
+        {
+            // 初期表示用の画像を読み込む
+            using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                this.FrameImage.Value = bitmap;
+            }
+        }
+
         /// <summary> build the capture graph for grabber. </summary>
         private void SetupGraph(IMoniker moniker, string deviceName, int width, int height, short bitCount)
         {

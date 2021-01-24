@@ -12,17 +12,22 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using Prism.Ioc;
+using OpenSCRLib;
+using OptionViews.Services;
 
 namespace OptionViews.CammeraCommons
 {
-    class CameraCommonPanelViewModel : HalationGhostViewModelBase
+    class CameraCommonPanelViewModel : HalationGhostViewModelBase, INavigationAware
     {
-        public ReactiveCommand ReturnOptionCommonPanelClick { get; }
+        private IContainerProvider container;
 
-        public ReactiveCommand AddCameraSettingClick { get; }
+        private ICommonCameraSettingService commonCameraSettingService;
 
-        public CameraCommonPanelViewModel(IRegionManager regionMan) : base(regionMan)
+        public CameraCommonPanelViewModel(IRegionManager regionMan, IContainerProvider injectionContainer, ICommonCameraSettingService commonCameraSettingService) : base(regionMan)
         {
+            this.container = injectionContainer;
+            this.commonCameraSettingService = commonCameraSettingService;
+
             this.ReturnOptionCommonPanelClick = new ReactiveCommand()
                 .WithSubscribe(() => this.onReturnOptionCommonPanelClick())
                 .AddTo(this.disposable);
@@ -30,7 +35,18 @@ namespace OptionViews.CammeraCommons
             this.AddCameraSettingClick = new ReactiveCommand()
                 .WithSubscribe(() => this.onAddCameraSettingClick())
                 .AddTo(this.disposable);
+
+            this.CameraSettings = this.commonCameraSettingService.CameraSettings
+                .AddTo(this.disposable);
         }
+
+        public ReactiveCommand ReturnOptionCommonPanelClick { get; }
+
+        public ReactiveCommand AddCameraSettingClick { get; }
+
+        public ReactiveCollection<CommonCameraSetting> CameraSettings { get; }
+
+
 
         private void onReturnOptionCommonPanelClick()
         {
@@ -41,7 +57,30 @@ namespace OptionViews.CammeraCommons
         private void onAddCameraSettingClick()
         {
             Console.WriteLine("Call onAddCameraSettingClick() method.");
-            this.regionManager.RequestNavigate("ContentRegion", "AdvancedCameraSettingPanel");
+
+            var parameter = new NavigationParameters();
+            parameter.Add("CameraSetting", null);
+            this.regionManager.RequestNavigate("ContentRegion", "AdvancedCameraSettingPanel", parameter);
         }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            this.CameraSettings.Clear();
+
+            // DBからカメラ設定を取得する
+            // DBにカメラ設定を保存する
+            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
+            var loadedSettings = dbAccessor.FindCameraSettings();
+
+            foreach (var loadedSetting in loadedSettings)
+            {
+                var setting = new CommonCameraSetting(loadedSetting, this.regionManager, this.container, this.commonCameraSettingService);
+                this.CameraSettings.Add(setting);
+            }
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext) { return true; }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext) { }
     }
 }

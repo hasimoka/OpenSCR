@@ -277,6 +277,7 @@
       <DependentUpon>CameraLogoutSettingPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="CameraLogoutSettings\CameraLogoutSettingPanelViewModel.cs" />
+    <Compile Include="CammeraCommons\CommonCameraSetting.cs" />
     <Compile Include="Models\DeviceTypeItem.cs" />
     <Compile Include="CammeraCommons\CameraCommonPanel.xaml.cs">
       <DependentUpon>CameraCommonPanel.xaml</DependentUpon>
@@ -288,6 +289,8 @@
     <Compile Include="OptionCommons\OptionCommonPanelViewModel.cs" />
     <Compile Include="OptionViewsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CommonCameraSettingService.cs" />
+    <Compile Include="Services\ICommonCameraSettingService.cs" />
     <Compile Include="Services\INetworkCameraSettingService.cs" />
     <Compile Include="Services\NetworkCameraSettingService.cs" />
     <Compile Include="Services\IUsbCameraSettingService.cs" />

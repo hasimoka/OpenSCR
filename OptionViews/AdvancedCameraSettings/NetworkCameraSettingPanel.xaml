@@ -7,6 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:OptionViews.AdvancedCameraSettings"
@@ -35,7 +36,73 @@
                 <TextBlock Style="{StaticResource ChipsHeadline}"
                                    Text="Preview"
                                    Grid.Row="0"/>
-                <Image x:Name="CameraImage" Stretch="Uniform" Source="{Binding FrameImage.Value, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"/>
+                <Grid Margin="5" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+                    <Image x:Name="CameraImage" Stretch="Uniform" Source="{Binding FrameImage.Value, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="200"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid VerticalAlignment="Center"
+                              HorizontalAlignment="Center" 
+                              Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="3*"/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="3*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <DockPanel Margin="5" Grid.Row="0" Grid.Column="1">
+                                <Button Command="{Binding UpMoveCommand}">
+                                    <iconPacks:PackIconVaadinIcons Kind="AngleDoubleUp"/>
+                                </Button>
+                            </DockPanel>
+                            <DockPanel Margin="5" Grid.Row="1" Grid.Column="0">
+                                <Button Command="{Binding LeftMoveCommand}">
+                                    <iconPacks:PackIconVaadinIcons Kind="AngleDoubleLeft"/>
+                                </Button>
+                            </DockPanel>
+                            <DockPanel Margin="5" Grid.Row="1" Grid.Column="2">
+                                <Button Command="{Binding RightMoveCommand}">
+                                    <iconPacks:PackIconVaadinIcons Kind="AngleDoubleRight"/>
+                                </Button>
+                            </DockPanel>
+                            <DockPanel Margin="5" Grid.Row="2" Grid.Column="1">
+                                <Button Command="{Binding DownMoveCommand}">
+                                    <iconPacks:PackIconVaadinIcons Kind="AngleDoubleDown"/>
+                                </Button>
+                            </DockPanel>
+                        </Grid>
+                        <DockPanel LastChildFill="False" Grid.Row="1">
+                            <Grid DockPanel.Dock="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="170"/>
+                                </Grid.ColumnDefinitions>
+                                <GroupBox Header="Zoom"
+                                          Margin="16"
+                                          Grid.Column="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Margin="5" Width="50" Command="{Binding ZoomInCommand}">
+                                            <iconPacks:PackIconMaterial Kind="Plus"/>
+                                        </Button>
+                                        <Button Margin="5" Width="50" Command="{Binding ZoomOutCommand}">
+                                            <iconPacks:PackIconMaterial Kind="Minus"/>
+                                        </Button>
+                                    </StackPanel>
+                                </GroupBox>
+                            </Grid>
+                        </DockPanel>
+                    </Grid>
+                </Grid>
             </Grid>
             <Grid Margin="3" 
                           Grid.Row="1">

@@ -71,6 +71,36 @@
             </GroupBox.HeaderTemplate>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="AdvancedCameraSettingPanel">
+                    <ItemsControl ItemsSource="{Binding CameraSettings}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:CommonCameraSetting}">
+                                <materialDesign:Card DockPanel.Dock="Top" Margin="5">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Border Background="#AABBEE" CornerRadius="3" Height="24" Margin="5">
+                                                <TextBlock Text="{Binding CameraChannel.Value}" Margin="5" Foreground="#F4F4ED"/>
+                                            </Border>
+                                            <Border Background="#F7AEF8" CornerRadius="3" Height="24" Margin="5">
+                                                <TextBlock Text="{Binding Encoding.Value}" Margin="5" Foreground="#F4F4ED"/>
+                                            </Border>
+                                            <Border Background="#8093F1" CornerRadius="3" Height="24" Margin="5">
+                                                <TextBlock Text="{Binding Resolution.Value}" Margin="5" Foreground="#F4F4ED"/>
+                                            </Border>
+                                            <TextBlock Margin="10" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding CameraName.Value}"/>
+                                        </StackPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Margin="5" Command="{Binding OpenCameraSettingButtonClick}">
+                                                <iconPacks:PackIconFeatherIcons Kind="Edit"/>
+                                            </Button>
+                                            <Button Margin="5" Command="{Binding DeleteCameraSettingButtonClick}">
+                                                <iconPacks:PackIconFeatherIcons Kind="Trash2"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </materialDesign:Card>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </ScrollViewer>
         </GroupBox>

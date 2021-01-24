@@ -9,6 +9,6 @@ namespace OnvifNetworkCameraClient.Models
 {
     public interface IWsDiscoveryClient : IDisposable
     {
-        void FindNetworkVideoTransmitterAsync(Action<IpCameraDeviceInfo> deviceDiscoveriedAction);
+        Task<List<NetworkCameraEndpoint>> DiscoveryNetworkVideoTransmitterAsync();
     }
 }

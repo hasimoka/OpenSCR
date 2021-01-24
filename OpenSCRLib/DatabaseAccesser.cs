@@ -1,6 +1,8 @@
 ﻿using LiteDB;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace OpenSCRLib
 {
@@ -8,9 +10,7 @@ namespace OpenSCRLib
     {
         private const string FILE_NAME = ".\\DB\\openSCR.db";
 
-        private const string CAMERA_LOGIN_INFO_TABLE = "camera_login_information";
-
-        private const int CAMERA_LOGIN_INFO_ID = 1;
+        private const string CAMERA_SETTING_TABLE = "camera_settings";
 
         public DatabaseAccesser()
         {
@@ -19,26 +19,87 @@ namespace OpenSCRLib
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(FILE_NAME));
             }
-
-            //// DBファイルの存在チェック／初期作成
-            //if (!File.Exists(FILE_NAME))
-            //{
-            //    File.Create(FILE_NAME).Close();
-            //}
         }
 
-        public CameraLoginInfo GetCameraLoginInfo()
+        public int GetNextCameraChannel()
         {
-            CameraLoginInfo result = null;
+            var nextCameraChannel = 0;
 
             try
             {
                 using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraLoginInfo>(CAMERA_LOGIN_INFO_TABLE);
-                    var record = col.FindOne(x => x.Id == CAMERA_LOGIN_INFO_ID);
+                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var records = col.FindAll();
+                    if (records.Count() > 0)
+                    {
+                        nextCameraChannel = records.Max(x => x.CameraChannel);
+                        nextCameraChannel += 1;
+                    }
+                    else
+                    {
+                        nextCameraChannel = 1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
-                    result = record;
+            return nextCameraChannel;
+        }
+
+        public List<CameraSetting> FindCameraSettings()
+        {
+            List<CameraSetting> cameraSettings = new List<CameraSetting>();
+
+            try
+            {
+                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                {
+                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    cameraSettings = col.FindAll().ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return cameraSettings;
+        }
+
+        public CameraSetting FindCameraSetting(int cameraChannel)
+        {
+            CameraSetting cameraSetting = null;
+
+            try
+            {
+                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                {
+                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    cameraSetting = col.FindOne(x => x.CameraChannel == cameraChannel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return cameraSetting;
+        }
+
+        public bool UpdateOrInsertCameraSetting(CameraSetting cameraSetting)
+        {
+            var result = false;
+
+            try 
+            {
+                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                {
+                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    result = col.Upsert(cameraSetting);
                 }
             }
             catch (Exception ex)
@@ -49,33 +110,24 @@ namespace OpenSCRLib
             return result;
         }
 
-        public void SetCameraLoginInfo(CameraLoginInfo cameraLoginInfo)
+        public bool DeleteCameraSetting(CameraSetting cameraSetting)
         {
+            var result = false;
+
             try
             {
                 using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraLoginInfo>(CAMERA_LOGIN_INFO_TABLE);
-                    var record = col.FindOne(x => x.Id == CAMERA_LOGIN_INFO_ID);
-
-                    if (record == null)
-                    {
-                        col.Insert(cameraLoginInfo);
-                    }
-                    else
-                    {
-                        record.Name = cameraLoginInfo.Name;
-                        record.Password = cameraLoginInfo.Password;
-
-                        col.Update(record);
-                    }
-                    
+                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    result = col.Delete(cameraSetting.Id);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
+
+            return result;
         }
     }
 }

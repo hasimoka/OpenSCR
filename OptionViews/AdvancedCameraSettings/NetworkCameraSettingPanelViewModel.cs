@@ -1,4 +1,5 @@
 ﻿using HalationGhost.WinApps;
+using OnvifNetworkCameraClient.Models;
 using OpenSCRLib;
 using OptionViews.Models;
 using OptionViews.Services;
@@ -8,6 +9,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +28,9 @@ namespace OptionViews.AdvancedCameraSettings
             this.container = containerProvider;
             this.networkCameraSettingService = cameraSettingService;
 
+            this.SharedCanExecuteState = new ReactivePropertySlim<bool>(true)
+                .AddTo(this.disposable);
+
             this.FrameImage = this.networkCameraSettingService.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(this.disposable);
@@ -34,6 +39,7 @@ namespace OptionViews.AdvancedCameraSettings
                 .AddTo(this.disposable);
 
             this.SelectedNetworkCameraProfile = this.networkCameraSettingService.SelectedNetworkCameraProfile
+                .SetValidateAttribute(()=>SelectedNetworkCameraProfile)
                 .AddTo(this.disposable);
 
             this.NetworkCameraProfileItemSelectionChanged = new ReactiveCommand()
@@ -45,12 +51,57 @@ namespace OptionViews.AdvancedCameraSettings
 
             this.BitrateLimit = this.networkCameraSettingService.BitrateLimit
                 .AddTo(this.disposable);
+
+            this.UpMoveCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onUpMoveCommand)
+                .AddTo(this.disposable);
+
+            this.DownMoveCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onDownMoveCommand)
+                .AddTo(this.disposable);
+
+            this.LeftMoveCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onLeftMoveCommand)
+                .AddTo(this.disposable);
+
+            this.RightMoveCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onRightMoveCommand)
+                .AddTo(this.disposable);
+
+            this.ZoomInCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onZoomInCommand)
+                .AddTo(this.disposable);
+
+            this.ZoomOutCommand = this.SelectedNetworkCameraProfile
+                .ObserveHasErrors
+                .Inverse()
+                .ToAsyncReactiveCommand(this.SharedCanExecuteState)
+                .WithSubscribe(onZoomOutCommand)
+                .AddTo(this.disposable);
         }
+
+        public ReactivePropertySlim<bool> SharedCanExecuteState;
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; }
 
         public ReactiveCollection<OnvifNetworkCameraProfile> NetworkCameraProfileItems { get; }
 
+        [NullObjectValidation]
         public ReactiveProperty<OnvifNetworkCameraProfile> SelectedNetworkCameraProfile { get; }
 
         public ReactiveCommand NetworkCameraProfileItemSelectionChanged { get; }
@@ -59,30 +110,17 @@ namespace OptionViews.AdvancedCameraSettings
 
         public ReactiveProperty<int> BitrateLimit { get; }
 
-        public void SetSetting(List<OnvifNetworkCameraProfile> profiles)
-        {
-            this.NetworkCameraProfileItems.Clear();
+        public AsyncReactiveCommand UpMoveCommand { get; }
 
-            if (profiles != null)
-            {
-                foreach (var profile in profiles.OrderBy(x => x.ProfileToken))
-                {
-                    this.NetworkCameraProfileItems.Add(profile);
-                }
+        public AsyncReactiveCommand DownMoveCommand { get; }
 
-                var firstProfile = this.NetworkCameraProfileItems.FirstOrDefault();
+        public AsyncReactiveCommand LeftMoveCommand { get; }
 
-                this.SelectedNetworkCameraProfile.Value = firstProfile;
-                this.FrameRateLimit.Value = firstProfile.FrameRateLimit;
-                this.BitrateLimit.Value = firstProfile.BitrateLimite;
-            }
-            else
-            {
-                this.SelectedNetworkCameraProfile.Value = null;
-                this.FrameRateLimit.Value = 0;
-                this.BitrateLimit.Value = 0;
-            }
-        }
+        public AsyncReactiveCommand RightMoveCommand { get; }
+
+        public AsyncReactiveCommand ZoomInCommand { get; }
+
+        public AsyncReactiveCommand ZoomOutCommand { get; }
 
         private void onNetworkCameraProfileItemSelectionChanged()
         {
@@ -93,6 +131,36 @@ namespace OptionViews.AdvancedCameraSettings
 
                 this.networkCameraSettingService.StartCapture();
             }
+        }
+
+        private async Task onUpMoveCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.UpMove);
+        }
+
+        private async Task onDownMoveCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.DownMove);
+        }
+
+        private async Task onLeftMoveCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.LeftMove);
+        }
+
+        private async Task onRightMoveCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.RightMove);
+        }
+
+        private async Task onZoomInCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.ZoomIn);
+        }
+
+        private async Task onZoomOutCommand()
+        {
+            await this.networkCameraSettingService.MoveAsync(PtzDirection.ZoomOut);
         }
     }
 }

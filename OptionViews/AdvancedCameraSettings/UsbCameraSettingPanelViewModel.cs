@@ -50,7 +50,10 @@ namespace OptionViews.AdvancedCameraSettings
 
         private void onResolutionAndFrameRateItemSelectionChanged()
         {
-            this.usbCameraSettingService.StartCapture();
+            if (this.SelectedUsbCameraVideoInfo.Value != null)
+            {
+                this.usbCameraSettingService.StartCapture();
+            }
         }
     }
 }

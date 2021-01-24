@@ -97,13 +97,14 @@ namespace OnvifNetworkCameraClient.Models
             this.rawFramesSource = null;
 
             this.isRunning = false;
+
+            Task.Delay(TimeSpan.FromMilliseconds(100));
         }
 
         public async Task<List<OnvifNetworkCameraProfile>> GetCameraDeviceInfoAsync(string host, string userName, string password)
         {
             var results = new List<OnvifNetworkCameraProfile>();
 
-            //var device = await OnvifClientFactory.CreateDeviceClientAsync(host, userName, password);
             var media = await OnvifClientFactory.CreateMediaClientAsync(host, userName, password);
             var streamSetup = new StreamSetup
             {
@@ -118,9 +119,12 @@ namespace OnvifNetworkCameraClient.Models
                 var cameraProfile = new OnvifNetworkCameraProfile();
 
                 cameraProfile.ProfileToken = profile.token;
-                cameraProfile.CanPtzAbsoluteMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultAbsolutePantTiltPositionSpace);
-                cameraProfile.CanPtzRelativeMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultRelativePanTiltTranslationSpace);
-                cameraProfile.CanPtzContinuousMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultContinuousPanTiltVelocitySpace);
+                if (profile.PTZConfiguration != null)
+                {
+                    cameraProfile.CanPtzAbsoluteMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultAbsolutePantTiltPositionSpace);
+                    cameraProfile.CanPtzRelativeMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultRelativePanTiltTranslationSpace);
+                    cameraProfile.CanPtzContinuousMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultContinuousPanTiltVelocitySpace);
+                }
 
                 try
                 {
@@ -157,7 +161,229 @@ namespace OnvifNetworkCameraClient.Models
             return results;
         }
 
+        public async Task<bool> SetCameraDeviceInfoAsync(string host, string userName, string password, string profileToken, int bitrateLimit, int encodingInterval, int frameLateLimit)
+        {
+            var result = false;
 
+            var media = await OnvifClientFactory.CreateMediaClientAsync(host, userName, password);
+            var streamSetup = new StreamSetup
+            {
+                Stream = StreamType.RTPUnicast,
+                Transport = new Transport { Protocol = TransportProtocol.UDP }
+            };
+
+            var profiles = await media.GetProfilesAsync();
+
+            foreach (var profile in profiles.Profiles)
+            {
+                if (profile.token == profileToken)
+                {
+                    try
+                    {
+                        var videoEncoderConfig = await media.GetVideoEncoderConfigurationAsync(profile.VideoEncoderConfiguration.token);
+
+                        videoEncoderConfig.RateControl.BitrateLimit = bitrateLimit;
+                        videoEncoderConfig.RateControl.EncodingInterval = encodingInterval;
+                        videoEncoderConfig.RateControl.FrameRateLimit = frameLateLimit;
+
+                        await media.SetVideoEncoderConfigurationAsync(videoEncoderConfig, true);
+                        result = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Throw exception. [{ex}]");
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public async Task MoveAsync(string host, string userName, string password, string profileToken, PtzDirection ptzDirection)
+        {
+            try
+            {
+                var ptz = await OnvifClientFactory.CreatePTZClientAsync(host, userName, password);
+
+                var ptz_status = await ptz.GetStatusAsync(profileToken);
+
+                switch (ptzDirection)
+                {
+                    case PtzDirection.UpMove:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x,
+                                y = ptz_status.Position.PanTilt.y + 0.01f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 0f,
+                                y = 1f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 0f
+                            }
+                        });
+                        break;
+                    case PtzDirection.DownMove:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x,
+                                y = ptz_status.Position.PanTilt.y - 0.01f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 0f,
+                                y = 1f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 0f
+                            }
+                        });
+                        break;
+                    case PtzDirection.LeftMove:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x + 0.01f,
+                                y = ptz_status.Position.PanTilt.y
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 1f,
+                                y = 0f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 0f
+                            }
+                        });
+                        break;
+                    case PtzDirection.RightMove:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x - 0.01f,
+                                y = ptz_status.Position.PanTilt.y
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 1f,
+                                y = 0f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 0f
+                            }
+                        });
+                        break;
+                    case PtzDirection.ZoomIn:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x,
+                                y = ptz_status.Position.PanTilt.y
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x + 0.004f
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 0f,
+                                y = 0f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 1f
+                            }
+                        });
+                        break;
+                    case PtzDirection.ZoomOut:
+                        await ptz.AbsoluteMoveAsync(profileToken, new PTZVector
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = ptz_status.Position.PanTilt.x,
+                                y = ptz_status.Position.PanTilt.y
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = ptz_status.Position.Zoom.x - 0.004f
+                            }
+                        }, new PTZSpeed
+                        {
+                            PanTilt = new Vector2D
+                            {
+                                x = 0f,
+                                y = 0f
+                            },
+                            Zoom = new Vector1D
+                            {
+                                x = 1f
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Throw exception: {ex}");
+            }
+        }
+
+        public void ClearFrameImage()
+        {
+            // 初期表示用の画像を読み込む
+            using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                this.FrameImage.Value = bitmap;
+            }
+        }
 
         /// <summary>
         /// 受信フレームのデコード完了後に呼び出されるコールバック関数

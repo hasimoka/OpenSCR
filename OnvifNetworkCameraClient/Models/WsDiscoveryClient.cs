@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Discovery;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -13,93 +14,83 @@ namespace OnvifNetworkCameraClient.Models
     {
         private DiscoveryClient discoveryClient;
 
-        private object userState;
-
-        private Action<IpCameraDeviceInfo> deviceDiscoveriedAction;
-
         public WsDiscoveryClient()
         {
 
             var endPoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
             this.discoveryClient = new DiscoveryClient(endPoint);
-            this.discoveryClient.FindProgressChanged += DiscoveryClient_FindProgressChanged;
-            this.discoveryClient.FindCompleted += DiscoveryClient_FindCompleted;
-
-            this.userState = null;
-
-            this.deviceDiscoveriedAction = null;
         }
 
-        public void Dispose()
+        public void Dispose() { }
+
+        public async Task<List<NetworkCameraEndpoint>> DiscoveryNetworkVideoTransmitterAsync()
         {
-            if (this.userState != null)
+            return await Task.Run(() => 
             {
-                this.discoveryClient.CancelAsync(this.userState);
-                this.userState = null;
-            }
-        }
+                var results = new List<NetworkCameraEndpoint>();
 
-        public void FindNetworkVideoTransmitterAsync(Action<IpCameraDeviceInfo> deviceDiscoveriedAction)
-        {
-            this.deviceDiscoveriedAction = deviceDiscoveriedAction;
-
-            var endPoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
-            this.discoveryClient = new DiscoveryClient(endPoint);
-            this.discoveryClient.FindProgressChanged += DiscoveryClient_FindProgressChanged;
-            this.discoveryClient.FindCompleted += DiscoveryClient_FindCompleted;
-
-            FindCriteria findCriteria = new FindCriteria();
-            findCriteria.Duration = TimeSpan.MaxValue;
-            findCriteria.MaxResults = int.MaxValue;
-            // Edit: optionally specify contract type, ONVIF v1.0
-            findCriteria.ContractTypeNames.Add(
-                new XmlQualifiedName(
-                    "NetworkVideoTransmitter",
-                    "http://www.onvif.org/ver10/network/wsdl"));
-
-            if (this.userState != null)
-            {
-                this.discoveryClient.CancelAsync(this.userState);
-            }
-
-            this.userState = new object();
-            this.discoveryClient.FindAsync(findCriteria, this.userState);
-        }
-
-        private void DiscoveryClient_FindProgressChanged(object sender, FindProgressChangedEventArgs e)
-        {
-            foreach (var uri in e.EndpointDiscoveryMetadata.ListenUris)
-            {
-                if (uri.HostNameType == UriHostNameType.IPv4)
+                try
                 {
-                    var deviceInfo = new IpCameraDeviceInfo();
-                    deviceInfo.EndpointUri = uri;
+                    var endPoint = new UdpDiscoveryEndpoint(DiscoveryVersion.WSDiscoveryApril2005);
+                    this.discoveryClient = new DiscoveryClient(endPoint);
 
-                    foreach (var scope in e.EndpointDiscoveryMetadata.Scopes)
+                    FindCriteria findCriteria = new FindCriteria();
+                    // タイムアウト時間を2秒に設定
+                    findCriteria.Duration = new TimeSpan(0, 0, 2);
+                    findCriteria.MaxResults = int.MaxValue;
+                    // Edit: optionally specify contract type, ONVIF v1.0
+                    findCriteria.ContractTypeNames.Add(
+                        new XmlQualifiedName(
+                            "NetworkVideoTransmitter",
+                            "http://www.onvif.org/ver10/network/wsdl"));
+
+                    var foundDevices = this.discoveryClient.Find(findCriteria);
+                    foreach (var endpoint in foundDevices.Endpoints)
                     {
-                        if (scope.Segments[1].Replace("/", string.Empty).ToLower() == "name")
+                        foreach (var uri in endpoint.ListenUris)
                         {
-                            deviceInfo.Name = scope.Segments[2].Replace("/", string.Empty);
-                        }
-                        else if (scope.Segments[1].Replace("/", string.Empty).ToLower() == "location")
-                        {
-                            deviceInfo.Location = scope.Segments[2].Replace("/", string.Empty);
+                            if (uri.HostNameType == UriHostNameType.IPv4)
+                            {
+                                try
+                                {
+                                    var networkCameraEndpoint = new NetworkCameraEndpoint();
+                                    networkCameraEndpoint.EndpointUri = uri;
+
+                                    foreach (var scope in endpoint.Scopes)
+                                    {
+                                        if (scope.Segments[1].Replace("/", string.Empty).ToLower() == "name")
+                                        {
+                                            if (scope.Segments.Length > 2)
+                                            {
+                                                networkCameraEndpoint.DeviceName = scope.Segments[2].Replace("/", string.Empty);
+                                            }
+                                        }
+                                        else if (scope.Segments[1].Replace("/", string.Empty).ToLower() == "location")
+                                        {
+                                            if (scope.Segments.Length > 2)
+                                            {
+                                                networkCameraEndpoint.Location = scope.Segments[2].Replace("/", string.Empty);
+                                            }
+                                        }
+                                    }
+
+                                    results.Add(networkCameraEndpoint);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex);
+                                }
+                            }
                         }
                     }
-
-                    if (this.deviceDiscoveriedAction != null)
-                        this.deviceDiscoveriedAction(deviceInfo);
                 }
-            }
-        }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
 
-        private void DiscoveryClient_FindCompleted(object sender, FindCompletedEventArgs e)
-        {
-            this.discoveryClient.Close();
-            this.discoveryClient = null;
-
-            if (this.userState != null)
-                this.userState = null;
+                return results;
+            });
         }
     }
 }

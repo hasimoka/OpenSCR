@@ -36,7 +36,8 @@ namespace OptionViews.AdvancedCameraSettings
             }
         }
 
-        public ReactiveProperty<string> DeviceName { get; }
+        public string DevicePath { get { return  this._captureDevice != null ? this._captureDevice.DevicePath : string.Empty; } }
 
+        public ReactiveProperty<string> DeviceName { get; }
     }
 }

@@ -24,7 +24,7 @@
                      SelectedItem="{Binding CameraDeviceSelectedItem.Value, Mode=TwoWay}">
                 <behaviours:Interaction.Triggers>
                     <behaviours:EventTrigger EventName="SelectionChanged">
-                        <rp:EventToReactiveCommand Command="{Binding SelectionChangedCameraDeviceList}"/>
+                        <rp:EventToReactiveCommand Command="{Binding SelectionChangedCameraDeviceListCommand}"/>
                     </behaviours:EventTrigger>
                 </behaviours:Interaction.Triggers>
                 <ListBox.ItemTemplate>

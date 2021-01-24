@@ -1,4 +1,5 @@
-﻿using OpenSCRLib;
+﻿using OnvifNetworkCameraClient.Models;
+using OpenSCRLib;
 using OptionViews.AdvancedCameraSettings;
 using OptionViews.Models;
 using Reactive.Bindings;
@@ -11,6 +12,12 @@ namespace OptionViews.Services
 {
     public interface INetworkCameraSettingService
     {
+        ReactivePropertySlim<string> UserName { get; }
+
+        ReactivePropertySlim<string> Password { get; }
+
+        ReactivePropertySlim<bool> IsLoggedIn { get; }
+
         ReactivePropertySlim<BitmapSource> FrameImage { get; }
 
         ReactiveCollection<NetworkCameraDeviceListItemViewModel> CameraDeviceListSource { get; }
@@ -25,9 +32,19 @@ namespace OptionViews.Services
 
         ReactiveProperty<int> BitrateLimit { get; }
 
-        void FindNetworkVideoTransmitterAsync(Action<IpCameraDeviceInfo> deviceDiscoveriedAction);
+        ReactivePropertySlim<bool> CanSelectionChangedCameraDeviceListCommand { get; }
 
-        Task<List<OnvifNetworkCameraProfile>> GetCameraDeviceInfoAsync(string host, string userName, string password);
+        void Clear();
+
+        Task RefreshCameraList();
+
+        Task<List<NetworkCameraEndpoint>> DiscoveryNetworkVideoTransmitterAsync();
+
+        Task<List<OnvifNetworkCameraProfile>> GetCameraDeviceInfoAsync();
+
+        Task SetCameraDeviceInfoAsync();
+
+        Task MoveAsync(PtzDirection ptzDirection);
 
         void StartCapture();
     }

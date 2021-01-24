@@ -32,11 +32,6 @@ namespace DirectShowCameraClient.Models
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; set; }
 
-        private List<DsDevice> GetCaptureDevices()
-        {
-            return DirectShowCaputer.GetCaptureDevices();
-        }
-
         public void FindUsbCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction)
         {
             this.deviceDiscoveriedAction = discoveriedAction;
@@ -52,15 +47,32 @@ namespace DirectShowCameraClient.Models
             });
         }
 
-        public List<UsbCameraVideoInfo> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
+        public async Task<List<UsbCameraDeviceInfo>> DiscoveryCaptureDeviceAsync()
         {
-            return DirectShowCaputer.GetVideoInfos(captureDevice);
+            return await Task.Run(() =>
+            {
+                List<UsbCameraDeviceInfo> results = new List<UsbCameraDeviceInfo>();
+
+                var devices = DirectShowCaputer.GetCaptureDevices();
+
+                foreach (var device in devices)
+                {
+                    results.Add(new UsbCameraDeviceInfo(device.DevicePath, device.Name));
+                }
+
+                return results;
+            });
+        }
+
+        public async Task<List<UsbCameraVideoInfo>> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
+        {
+            return await Task.Run(() => { return DirectShowCaputer.GetVideoInfos(captureDevice); });
         }
 
         public void StartCapture(string devicePath, int width, int height, short bitCount)
         {
             if (this.isRunning)
-                this.capture.Stop();
+                this.StopCapture();
 
             this.capture.Start(devicePath, width, height, bitCount);
             this.isRunning = true;
@@ -70,6 +82,11 @@ namespace DirectShowCameraClient.Models
         {
             this.capture.Stop();
             this.isRunning = false;
+        }
+
+        public void ClearFrameImage()
+        {
+            this.capture.ClearFrameImage();
         }
     }
 }

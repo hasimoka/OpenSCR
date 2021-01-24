@@ -24,6 +24,7 @@ namespace OptionViews
 
 		public void RegisterTypes(IContainerRegistry containerRegistry)
 		{
+			containerRegistry.RegisterSingleton<ICommonCameraSettingService, CommonCameraSettingService>();
 			containerRegistry.RegisterSingleton<INetworkCameraSettingService, NetworkCameraSettingService>();
 			containerRegistry.RegisterSingleton<IUsbCameraSettingService, UsbCameraSettingService>();
 

@@ -8,7 +8,7 @@ namespace OptionViews.Models
 {
     public enum CameraType
     {
-        IpCamera = 1,
+        NetworkCamera = 1,
         UsbCamera = 2,
     }
 
