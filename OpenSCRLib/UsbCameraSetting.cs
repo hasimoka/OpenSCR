@@ -8,7 +8,7 @@ namespace OpenSCRLib
         public UsbCameraSetting() { }
 
         [BsonCtor]
-        public UsbCameraSetting(string devicePath, int cameraHeight, int cameraWidth, int frameRate)
+        public UsbCameraSetting(string devicePath, int cameraHeight, int cameraWidth, short frameRate)
         {
             this.DevicePath = devicePath;
 
@@ -25,6 +25,6 @@ namespace OpenSCRLib
 
         public int CameraWidth { get; set; }
 
-        public int FrameRate { get; set; }
+        public short FrameRate { get; set; }
     }
 }

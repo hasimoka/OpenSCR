@@ -13,6 +13,7 @@ using Prism.Mvvm;
 using System.Reflection;
 using OptionViews;
 using OpenSCRLib;
+using VideoViews;
 
 namespace OpenSCR
 {
@@ -25,8 +26,7 @@ namespace OpenSCR
         /// <param name="moduleCatalog">IModuleCatalog。</param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            //moduleCatalog.AddModule<StartUpViewModule>();
-            //moduleCatalog.AddModule<ChildViewsModule>();
+            moduleCatalog.AddModule<VideoViewsModule>();
             moduleCatalog.AddModule<OptionViewsModule>();
         }
 

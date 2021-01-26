@@ -278,6 +278,7 @@
     </Compile>
     <Compile Include="CameraLogoutSettings\CameraLogoutSettingPanelViewModel.cs" />
     <Compile Include="CammeraCommons\CommonCameraSetting.cs" />
+    <Compile Include="CammeraCommons\ICommonCameraSetting.cs" />
     <Compile Include="Models\DeviceTypeItem.cs" />
     <Compile Include="CammeraCommons\CameraCommonPanel.xaml.cs">
       <DependentUpon>CameraCommonPanel.xaml</DependentUpon>

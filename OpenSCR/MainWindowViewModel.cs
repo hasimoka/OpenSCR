@@ -114,7 +114,7 @@ namespace OpenSCR
 				.AddTo(this.disposable);
 
 			this.ContentRendered = new ReactiveCommand()
-				.WithSubscribe(() => this.regionManager.RequestNavigate("ContentRegion", "StartUpPanel"))
+				.WithSubscribe(() => this.regionManager.RequestNavigate("ContentRegion", "VideoViewPanel"))
 				.AddTo(this.disposable);
 
 			this.DialogView = new ReactiveProperty<UserControl>()
@@ -127,13 +127,10 @@ namespace OpenSCR
 		/// <summary>HamburgerMenuのメニュー項目を初期化します。</summary>
 		private void initialilzeMenu()
 		{
-			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.BugSolid, "バグ", "BugPanel"));
-			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.UserSolid, "ユーザ", "UserPanel"));
-			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.CoffeeSolid, "珈琲", "CoffeePanel"));
-			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.FontAwesomeBrands, "カメラ設定", "CameraCommonPanel"));
+			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.VideoSolid, "ビデオ一覧", "VideoViewPanel"));
 
 			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.CogsSolid, "設定", "OptionCommonPanel"));
-			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.InfoCircleSolid, "このサンプルアプリについて", "AboutPanel"));
+			this.OptionMenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.InfoCircleSolid, "このアプリケーションについて", "AboutPanel"));
 		}
 
 		#endregion

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowCameraClient", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnvifNetworkCameraClient", "OnvifNetworkCameraClient\OnvifNetworkCameraClient.csproj", "{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoViews", "VideoViews\VideoViews.csproj", "{9E600BB3-21CA-462F-B63F-153B7A9CACED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

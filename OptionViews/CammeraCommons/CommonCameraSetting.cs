@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OptionViews.CammeraCommons
 {
-    public class CommonCameraSetting : HalationGhostViewModelBase
+    public class CommonCameraSetting : HalationGhostViewModelBase, ICommonCameraSetting
     {
         private IContainerProvider container;
 

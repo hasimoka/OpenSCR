@@ -31,7 +31,7 @@
  											   Margin="8, 10, 30, 10"
  											   Focusable="False"
  											   Width="32" Height="32" />
-                    <TextBlock Text="{Binding MenuText.Value}"
+                <TextBlock Text="{Binding MenuText.Value}"
  						   VerticalAlignment="Center"
  						   Style="{StaticResource MaterialDesignHeadline6TextBlock}" />
             </StackPanel>
