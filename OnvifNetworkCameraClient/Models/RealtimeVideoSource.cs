@@ -15,7 +15,25 @@ namespace OnvifNetworkCameraClient.Models
         private readonly Dictionary<VideoCodecId, IVideoDecoder> _videoDecodersMap =
             new Dictionary<VideoCodecId, IVideoDecoder>();
 
+        private string frameOutputFolder;
+
         public event EventHandler<DecodedVideoFrame> FrameDecoded;
+
+        public RealtimeVideoSource() 
+        {
+            this._rawFramesSource = null;
+            this._videoDecodersMap = new Dictionary<VideoCodecId, IVideoDecoder>();
+
+            this.frameOutputFolder = null;
+        }
+        
+        public RealtimeVideoSource(string frameOutputFolder)
+        {
+            this._rawFramesSource = null;
+            this._videoDecodersMap = new Dictionary<VideoCodecId, IVideoDecoder>();
+
+            this.frameOutputFolder = frameOutputFolder;
+        }
 
         public void SetRawFramesSource(IRawFramesSource rawFramesSource)
         {
@@ -69,7 +87,10 @@ namespace OnvifNetworkCameraClient.Models
             {
                 var factory = VideoDecoderFactory.getFactory(codecId);
                 if (factory != null)
+                {
                     decoder = factory.CreateVideoDecoder();
+                    decoder.SetOutputFolder(this.frameOutputFolder);
+                }
 
                 if (decoder != null)
                     _videoDecodersMap.Add(codecId, decoder);

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using MainWindowServices;
-using System.Windows;
-using Prism.Ioc;
+﻿using MainWindowServices;
+using OpenSCRLib;
+using OptionViews;
 using Prism.DryIoc;
+using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Mvvm;
+using System;
 using System.Reflection;
-using OptionViews;
-using OpenSCRLib;
+using System.Windows;
 using VideoViews;
 
 namespace OpenSCR

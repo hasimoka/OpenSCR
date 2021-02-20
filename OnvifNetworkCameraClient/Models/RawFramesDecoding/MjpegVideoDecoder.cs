@@ -15,9 +15,12 @@ namespace OnvifNetworkCameraClient.Models.RawFramesDecoding
     {
         private VideoCodecId codecId;
 
+        private H264FrameRecorder recorder;
+
         public MjpegVideoDecoder(VideoCodecId videoCodecId)
         {
             this.codecId = videoCodecId;
+            this.recorder = null;
         }
 
         public static IVideoDecoder CreateDecoder(VideoCodecId videoCodecId)
@@ -27,6 +30,11 @@ namespace OnvifNetworkCameraClient.Models.RawFramesDecoding
 
         public void Dispose()
         {
+            if (this.recorder != null)
+            {
+                this.recorder.Stop();
+                this.recorder = null;
+            }
         }
 
         public DecodedVideoFrame TryDecode(RawVideoFrame rawVideoFrame)
@@ -40,6 +48,21 @@ namespace OnvifNetworkCameraClient.Models.RawFramesDecoding
             }
 
             return decodedVideoFrame;
+        }
+
+        public void SetOutputFolder(string outputFolder)
+        {
+            if (!string.IsNullOrEmpty(outputFolder))
+            {
+                if (this.recorder != null)
+                {
+                    this.recorder.Stop();
+                    this.recorder = null;
+                }
+
+                this.recorder = new H264FrameRecorder();
+                this.recorder.Start(outputFolder);
+            }
         }
 
         private Bitmap BitmapFromSource(BitmapSource bitmapsource)

@@ -37,7 +37,13 @@ namespace VideoViews.ViewModels
 
         public bool IsNavigationTarget(NavigationContext navigationContext) { return true; }
 
-        public void OnNavigatedFrom(NavigationContext navigationContext) { }
+        public void OnNavigatedFrom(NavigationContext navigationContext) 
+        { 
+            foreach (var item in this.CameraViewItems)
+            {
+                item.StopCapture();
+            }
+        }
 
         public void OnNavigatedTo(NavigationContext navigationContext) 
         {
@@ -52,7 +58,7 @@ namespace VideoViews.ViewModels
             var connectedCount = 0;
             foreach (var loadedSetting in loadedSettings)
             {
-                var setting = this.container.Resolve<CameraViewItemViewModel>((typeof(CameraSetting), loadedSetting));
+                var setting = new CameraViewItemViewModel(loadedSetting);
                 this.CameraViewItems.Add(setting);
                 connectedCount += 1;
             }

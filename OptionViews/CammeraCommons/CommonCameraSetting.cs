@@ -36,10 +36,10 @@ namespace OptionViews.CammeraCommons
                 .AddTo(this.disposable);
 
             var encodingValue = string.Empty;
-            if (cameraSetting.NetowrkCameraSetting != null)
+            if (cameraSetting.NetworkCameraSetting != null)
             {
                 // "EncodingFormat(IP Address)"のフォーマット
-                encodingValue = $"{cameraSetting.NetowrkCameraSetting.Encoding} ({cameraSetting.NetowrkCameraSetting.IpAddress})";
+                encodingValue = $"{cameraSetting.NetworkCameraSetting.Encoding} ({cameraSetting.NetworkCameraSetting.IpAddress})";
             }
             else if (cameraSetting.UsbCameraSetting != null)
             {
@@ -49,9 +49,9 @@ namespace OptionViews.CammeraCommons
                 .AddTo(this.disposable);
 
             var resoluutionValue = string.Empty;
-            if (cameraSetting.NetowrkCameraSetting != null)
+            if (cameraSetting.NetworkCameraSetting != null)
             {
-                resoluutionValue = $"{cameraSetting.NetowrkCameraSetting.CameraWidth} x {cameraSetting.NetowrkCameraSetting.CameraHeight}";
+                resoluutionValue = $"{cameraSetting.NetworkCameraSetting.CameraWidth} x {cameraSetting.NetworkCameraSetting.CameraHeight}";
             }
             else if (cameraSetting.UsbCameraSetting != null)
             {

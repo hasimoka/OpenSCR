@@ -14,23 +14,24 @@ using Mictlanix.DotNet.Onvif.Common;
 using OpenSCRLib;
 using Reactive.Bindings.Extensions;
 using HalationGhost;
+using System.Collections.Concurrent;
 
 namespace OnvifNetworkCameraClient.Models
 {
     public class NetworkCameraClient : BindableModelBase
     {
-        private const string RTSP_PREFIX = "rtsp://";
-        private const string HTTP_PREFIX = "http://";
+        private const string RtspPrefix = "rtsp://";
+        private const string HttpPrefix = "http://";
 
-        private readonly RealtimeVideoSource realtimeVideoSource;
+        private readonly RealtimeVideoSource _realtimeVideoSource;
 
-        private IRawFramesSource rawFramesSource;
+        private IRawFramesSource _rawFramesSource;
 
-        private bool isRunning;
+        private bool _isRunning;
 
         public NetworkCameraClient()
         {
-            this.realtimeVideoSource = new RealtimeVideoSource();
+            this._realtimeVideoSource = new RealtimeVideoSource();
 
             // 初期表示用の画像を読み込む
             using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
@@ -46,12 +47,35 @@ namespace OnvifNetworkCameraClient.Models
                     .AddTo(this.Disposable);
             }
 
-            this.realtimeVideoSource.FrameDecoded += OnFrameDecoded;
+            this._realtimeVideoSource.FrameDecoded += OnFrameDecoded;
 
-            this.isRunning = false;
+            this._isRunning = false;
         }
 
-        public IVideoSource VideoSource => realtimeVideoSource;
+        public NetworkCameraClient(int cameraChannel)
+        {
+            this._realtimeVideoSource = new RealtimeVideoSource($".\\Movies\\{cameraChannel:00}");
+
+            // 初期表示用の画像を読み込む
+            using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                this.FrameImage = new ReactivePropertySlim<BitmapSource>(bitmap)
+                    .AddTo(this.Disposable);
+            }
+
+            this._realtimeVideoSource.FrameDecoded += OnFrameDecoded;
+
+            this._isRunning = false;
+        }
+
+        public IVideoSource VideoSource => _realtimeVideoSource;
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; }
 
@@ -60,16 +84,16 @@ namespace OnvifNetworkCameraClient.Models
             if (mediaUrl == null)
                 return;
 
-            if (this.isRunning)
-                this.StopCapture();
+            if (_isRunning)
+                StopCapture();
 
-            if (rawFramesSource != null)
+            if (_rawFramesSource != null)
                 return;
 
-            string address = mediaUrl;
+            var address = mediaUrl;
 
-            if (!address.StartsWith(RTSP_PREFIX) && !address.StartsWith(HTTP_PREFIX))
-                address = RTSP_PREFIX + address;
+            if (!address.StartsWith(RtspPrefix) && !address.StartsWith(HttpPrefix))
+                address = RtspPrefix + address;
 
             if (!Uri.TryCreate(address, UriKind.Absolute, out Uri deviceUri))
                 throw new Exception("Invalid device address.");
@@ -80,23 +104,23 @@ namespace OnvifNetworkCameraClient.Models
             connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
             connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
 
-            this.rawFramesSource = new RawFramesSource(connectionParameters);
-            this.realtimeVideoSource.SetRawFramesSource(this.rawFramesSource);
+            _rawFramesSource = new RawFramesSource(connectionParameters);
+            _realtimeVideoSource.SetRawFramesSource(_rawFramesSource);
 
-            this.rawFramesSource.Start();
-            this.isRunning = true;
+            _rawFramesSource.Start();
+            _isRunning = true;
         }
 
         public void StopCapture()
         {
-            if (this.rawFramesSource == null)
+            if (_rawFramesSource == null)
                 return;
 
-            this.rawFramesSource.Stop();
-            this.realtimeVideoSource.SetRawFramesSource(null);
-            this.rawFramesSource = null;
+            _rawFramesSource.Stop();
+            _realtimeVideoSource.SetRawFramesSource(null);
+            _rawFramesSource = null;
 
-            this.isRunning = false;
+            _isRunning = false;
 
             Task.Delay(TimeSpan.FromMilliseconds(100));
         }
@@ -116,9 +140,8 @@ namespace OnvifNetworkCameraClient.Models
 
             foreach (var profile in profiles.Profiles)
             {
-                var cameraProfile = new OnvifNetworkCameraProfile();
+                var cameraProfile = new OnvifNetworkCameraProfile {ProfileToken = profile.token};
 
-                cameraProfile.ProfileToken = profile.token;
                 if (profile.PTZConfiguration != null)
                 {
                     cameraProfile.CanPtzAbsoluteMove = !string.IsNullOrWhiteSpace(profile.PTZConfiguration.DefaultAbsolutePantTiltPositionSpace);
@@ -161,38 +184,37 @@ namespace OnvifNetworkCameraClient.Models
             return results;
         }
 
-        public async Task<bool> SetCameraDeviceInfoAsync(string host, string userName, string password, string profileToken, int bitrateLimit, int encodingInterval, int frameLateLimit)
+        public async Task<bool> SetCameraDeviceInfoAsync(string host, string userName, string password, string profileToken, int bitRateLimit, int encodingInterval, int frameLateLimit)
         {
             var result = false;
 
             var media = await OnvifClientFactory.CreateMediaClientAsync(host, userName, password);
-            var streamSetup = new StreamSetup
-            {
-                Stream = StreamType.RTPUnicast,
-                Transport = new Transport { Protocol = TransportProtocol.UDP }
-            };
+            //var streamSetup = new StreamSetup
+            //{
+            //    Stream = StreamType.RTPUnicast,
+            //    Transport = new Transport { Protocol = TransportProtocol.UDP }
+            //};
 
             var profiles = await media.GetProfilesAsync();
 
             foreach (var profile in profiles.Profiles)
             {
-                if (profile.token == profileToken)
+                if (profile.token != profileToken) continue;
+
+                try
                 {
-                    try
-                    {
-                        var videoEncoderConfig = await media.GetVideoEncoderConfigurationAsync(profile.VideoEncoderConfiguration.token);
+                    var videoEncoderConfig = await media.GetVideoEncoderConfigurationAsync(profile.VideoEncoderConfiguration.token);
 
-                        videoEncoderConfig.RateControl.BitrateLimit = bitrateLimit;
-                        videoEncoderConfig.RateControl.EncodingInterval = encodingInterval;
-                        videoEncoderConfig.RateControl.FrameRateLimit = frameLateLimit;
+                    videoEncoderConfig.RateControl.BitrateLimit = bitRateLimit;
+                    videoEncoderConfig.RateControl.EncodingInterval = encodingInterval;
+                    videoEncoderConfig.RateControl.FrameRateLimit = frameLateLimit;
 
-                        await media.SetVideoEncoderConfigurationAsync(videoEncoderConfig, true);
-                        result = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Throw exception. [{ex}]");
-                    }
+                    await media.SetVideoEncoderConfigurationAsync(videoEncoderConfig, true);
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Throw exception. [{ex}]");
                 }
             }
 
@@ -205,7 +227,7 @@ namespace OnvifNetworkCameraClient.Models
             {
                 var ptz = await OnvifClientFactory.CreatePTZClientAsync(host, userName, password);
 
-                var ptz_status = await ptz.GetStatusAsync(profileToken);
+                var ptzStatus = await ptz.GetStatusAsync(profileToken);
 
                 switch (ptzDirection)
                 {
@@ -214,12 +236,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x,
-                                y = ptz_status.Position.PanTilt.y + 0.01f
+                                x = ptzStatus.Position.PanTilt.x,
+                                y = ptzStatus.Position.PanTilt.y + 0.01f
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x
+                                x = ptzStatus.Position.Zoom.x
                             }
                         }, new PTZSpeed
                         {
@@ -239,12 +261,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x,
-                                y = ptz_status.Position.PanTilt.y - 0.01f
+                                x = ptzStatus.Position.PanTilt.x,
+                                y = ptzStatus.Position.PanTilt.y - 0.01f
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x
+                                x = ptzStatus.Position.Zoom.x
                             }
                         }, new PTZSpeed
                         {
@@ -264,12 +286,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x + 0.01f,
-                                y = ptz_status.Position.PanTilt.y
+                                x = ptzStatus.Position.PanTilt.x + 0.01f,
+                                y = ptzStatus.Position.PanTilt.y
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x
+                                x = ptzStatus.Position.Zoom.x
                             }
                         }, new PTZSpeed
                         {
@@ -289,12 +311,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x - 0.01f,
-                                y = ptz_status.Position.PanTilt.y
+                                x = ptzStatus.Position.PanTilt.x - 0.01f,
+                                y = ptzStatus.Position.PanTilt.y
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x
+                                x = ptzStatus.Position.Zoom.x
                             }
                         }, new PTZSpeed
                         {
@@ -314,12 +336,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x,
-                                y = ptz_status.Position.PanTilt.y
+                                x = ptzStatus.Position.PanTilt.x,
+                                y = ptzStatus.Position.PanTilt.y
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x + 0.004f
+                                x = ptzStatus.Position.Zoom.x + 0.004f
                             }
                         }, new PTZSpeed
                         {
@@ -339,12 +361,12 @@ namespace OnvifNetworkCameraClient.Models
                         {
                             PanTilt = new Vector2D
                             {
-                                x = ptz_status.Position.PanTilt.x,
-                                y = ptz_status.Position.PanTilt.y
+                                x = ptzStatus.Position.PanTilt.x,
+                                y = ptzStatus.Position.PanTilt.y
                             },
                             Zoom = new Vector1D
                             {
-                                x = ptz_status.Position.Zoom.x - 0.004f
+                                x = ptzStatus.Position.Zoom.x - 0.004f
                             }
                         }, new PTZSpeed
                         {
@@ -381,7 +403,7 @@ namespace OnvifNetworkCameraClient.Models
                 bitmap.EndInit();
                 bitmap.Freeze();
 
-                this.FrameImage.Value = bitmap;
+                FrameImage.Value = bitmap;
             }
         }
 
@@ -392,10 +414,12 @@ namespace OnvifNetworkCameraClient.Models
         /// <param name="decodedVideoFrame"></param>
         private void OnFrameDecoded(object sender, DecodedVideoFrame decodedVideoFrame)
         {
+            if (decodedVideoFrame.FrameImage == null) return;
+
             // Bitmap -> BitmapImageへ変換をおこなう
             using (var memory = new MemoryStream())
             {
-                decodedVideoFrame.Image.Save(memory, ImageFormat.Png);
+                decodedVideoFrame.FrameImage.Save(memory, ImageFormat.Png);
                 memory.Position = 0;
 
                 var bitmapImage = new BitmapImage();

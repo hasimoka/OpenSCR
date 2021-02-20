@@ -1,8 +1,9 @@
 ﻿using LiteDB;
+using System;
 
 namespace OpenSCRLib
 {
-    public class CameraSetting
+    public class CameraSetting : IDisposable
     {
         [BsonCtor]
         public CameraSetting() { }
@@ -16,7 +17,7 @@ namespace OpenSCRLib
 
             this.CameraName = cameraName;
 
-            this.NetowrkCameraSetting = networkCameraSetting;
+            this.NetworkCameraSetting = networkCameraSetting;
 
             this.UsbCameraSetting = usbCameraSetting;
         }
@@ -27,13 +28,15 @@ namespace OpenSCRLib
 
         public string CameraName { get; set; }
 
-        public NetworkCameraSetting NetowrkCameraSetting { get; set; }
+        public NetworkCameraSetting NetworkCameraSetting { get; set; }
 
         public UsbCameraSetting UsbCameraSetting { get; set; }
 
+        public void Dispose() { }
+
         public override string ToString()
         {
-            return $"CameraSetting(Id={this.Id}, CameraChannel={this.CameraChannel}, CameraName={this.CameraName}, NetworkCameraSetting={this.NetowrkCameraSetting}, UsbCameraSetting={this.UsbCameraSetting}";
+            return $"CameraSetting(Id={this.Id}, CameraChannel={this.CameraChannel}, CameraName={this.CameraName}, NetworkCameraSetting={this.NetworkCameraSetting}, UsbCameraSetting={this.UsbCameraSetting}";
         }
     }
 }

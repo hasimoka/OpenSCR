@@ -1,5 +1,4 @@
-﻿using DirectShowLib;
-using HalationGhost;
+﻿using HalationGhost;
 using OpenSCRLib;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -10,31 +9,51 @@ using System.Windows.Media.Imaging;
 
 namespace DirectShowCameraClient.Models
 {
-    public class UsbCameraClient : BindableModelBase, IUsbCameraClient
+    public class UsbCameraClient : BindableModelBase
     {
-        private DirectShowCaputer capture;
+        private readonly DirectShowCaputer _capture;
 
-        private Action<UsbCameraDeviceInfo> deviceDiscoveriedAction;
+        private Action<UsbCameraDeviceInfo> _deviceDiscoveredAction;
 
-        private bool isRunning;
+        private bool _isRunning;
+
+        private int? _cameraChannel;
 
         public UsbCameraClient()
         {
-            this.capture = new DirectShowCaputer()
+            this._cameraChannel = null;
+
+            this._capture = new DirectShowCaputer()
                 .AddTo(this.Disposable);
 
-            this.FrameImage = this.capture.FrameImage
+            this.FrameImage = this._capture.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(this.Disposable);
 
-            this.isRunning = false;
+            this._isRunning = false;
+        }
+
+
+
+        public UsbCameraClient(int cameraChannel)
+        {
+            this._cameraChannel = cameraChannel;
+
+            this._capture = new DirectShowCaputer()
+                .AddTo(this.Disposable);
+
+            this.FrameImage = this._capture.FrameImage
+                .ToReactivePropertySlimAsSynchronized(x => x.Value)
+                .AddTo(this.Disposable);
+
+            this._isRunning = false;
         }
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; set; }
 
-        public void FindUsbCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction)
+        public void FindUsbCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveredAction)
         {
-            this.deviceDiscoveriedAction = discoveriedAction;
+            this._deviceDiscoveredAction = discoveredAction;
 
             var task = Task.Run(() =>
             {
@@ -42,7 +61,7 @@ namespace DirectShowCameraClient.Models
 
                 foreach (var device in devices)
                 {
-                    this.deviceDiscoveriedAction(new UsbCameraDeviceInfo(device.DevicePath, device.Name));
+                    this._deviceDiscoveredAction(new UsbCameraDeviceInfo(device.DevicePath, device.Name));
                 }
             });
         }
@@ -66,27 +85,27 @@ namespace DirectShowCameraClient.Models
 
         public async Task<List<UsbCameraVideoInfo>> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
         {
-            return await Task.Run(() => { return DirectShowCaputer.GetVideoInfos(captureDevice); });
+            return await Task.Run(() => DirectShowCaputer.GetVideoInfos(captureDevice));
         }
 
         public void StartCapture(string devicePath, int width, int height, short bitCount)
         {
-            if (this.isRunning)
+            if (this._isRunning)
                 this.StopCapture();
 
-            this.capture.Start(devicePath, width, height, bitCount);
-            this.isRunning = true;
+            this._capture.Start(devicePath, width, height, bitCount);
+            this._isRunning = true;
         }
 
         public void StopCapture()
         {
-            this.capture.Stop();
-            this.isRunning = false;
+            this._capture.Stop();
+            this._isRunning = false;
         }
 
         public void ClearFrameImage()
         {
-            this.capture.ClearFrameImage();
+            this._capture.ClearFrameImage();
         }
     }
 }

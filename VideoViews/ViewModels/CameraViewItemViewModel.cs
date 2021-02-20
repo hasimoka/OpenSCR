@@ -1,4 +1,5 @@
 ﻿using DirectShowCameraClient.Models;
+using HalationGhost;
 using HalationGhost.WinApps;
 using OnvifNetworkCameraClient.Models;
 using OpenSCRLib;
@@ -12,83 +13,92 @@ using System.Windows.Media.Imaging;
 
 namespace VideoViews.ViewModels
 {
-    public class CameraViewItemViewModel : HalationGhostViewModelBase
+    public class CameraViewItemViewModel : BindableModelBase
     {
-        private CameraSetting cameraSetting;
+        private CameraSetting _cameraSetting;
 
-        private IContainerProvider container;
+        private readonly NetworkCameraClient _networkCameraClient;
 
-        private NetworkCameraClient networkCameraClient;
+        private readonly UsbCameraClient _usbCameraClient;
 
-        private UsbCameraClient usbCameraClient;
-
-        public CameraViewItemViewModel(CameraSetting cameraSetting, IRegionManager regionMan, IContainerProvider container) : base(regionMan)
+        public CameraViewItemViewModel(CameraSetting cameraSetting)
         {
-            this.cameraSetting = cameraSetting;
-            this.container = container;
+            this._cameraSetting = cameraSetting;
 
             this.CameraName = new ReactivePropertySlim<string>()
-                .AddTo(this.disposable);
+                .AddTo(this.Disposable);
 
-            if (cameraSetting.NetowrkCameraSetting != null)
+            if (this._cameraSetting.NetworkCameraSetting != null)
             {
-                this.networkCameraClient = new NetworkCameraClient();
-                this.usbCameraClient = null;
+                this._networkCameraClient = new NetworkCameraClient(cameraSetting.CameraChannel);
+                this._usbCameraClient = null;
 
-                this.FrameImage = this.networkCameraClient.FrameImage
+                this.FrameImage = this._networkCameraClient.FrameImage
                     .ToReactivePropertySlimAsSynchronized(x => x.Value)
-                    .AddTo(this.disposable);
+                    .AddTo(this.Disposable);
 
                 // カメラにログインするユーザ名／パスワードを取得する
                 var name = string.Empty;
                 var password = string.Empty;
-                if (this.cameraSetting.NetowrkCameraSetting.IsLoggedIn)
+                if (this._cameraSetting.NetworkCameraSetting.IsLoggedIn)
                 {
-                    name = this.cameraSetting.NetowrkCameraSetting.UserName;
-                    password = this.cameraSetting.NetowrkCameraSetting.Password;
+                    name = this._cameraSetting.NetworkCameraSetting.UserName;
+                    password = this._cameraSetting.NetworkCameraSetting.Password;
                 }
 
-                this.networkCameraClient.StartCapture(this.cameraSetting.NetowrkCameraSetting.StreamUri, name, password);
+                this._networkCameraClient.StartCapture(this._cameraSetting.NetworkCameraSetting.StreamUri, name, password);
 
             }
-            else if (cameraSetting.UsbCameraSetting != null)
+            else if (this._cameraSetting.UsbCameraSetting != null)
             {
-                this.networkCameraClient = null;
-                this.usbCameraClient = new UsbCameraClient();
+                this._networkCameraClient = null;
+                this._usbCameraClient = new UsbCameraClient(cameraSetting.CameraChannel);
 
-                this.FrameImage = this.usbCameraClient.FrameImage
+                this.FrameImage = this._usbCameraClient.FrameImage
                     .ToReactivePropertySlimAsSynchronized(x => x.Value)
-                    .AddTo(this.disposable);
+                    .AddTo(this.Disposable);
 
-                this.usbCameraClient.StartCapture(
-                    this.cameraSetting.UsbCameraSetting.DevicePath,
-                    this.cameraSetting.UsbCameraSetting.CameraWidth,
-                    this.cameraSetting.UsbCameraSetting.CameraHeight,
-                    this.cameraSetting.UsbCameraSetting.FrameRate);
+                this._usbCameraClient.StartCapture(
+                    this._cameraSetting.UsbCameraSetting.DevicePath,
+                    this._cameraSetting.UsbCameraSetting.CameraWidth,
+                    this._cameraSetting.UsbCameraSetting.CameraHeight,
+                    this._cameraSetting.UsbCameraSetting.FrameRate);
             }
             else
             {
                 throw new ArgumentException("カメラ種類が設定されていないカメラ設定が引数に指定されました。");
             }
 
-            this.CameraName.Value = this.cameraSetting.CameraName;
-
+            this.CameraName.Value = this._cameraSetting.CameraName;
 
             this.ImageButtonClickCommand = new AsyncReactiveCommand()
                 .WithSubscribe(async () =>
                 {
                     await Task.Run(() =>
                     {
-                        Console.WriteLine($"Call ImageButtonClickCommand. ({this.cameraSetting.CameraChannel} ch)");
+                        Console.WriteLine($"Call ImageButtonClickCommand. ({this._cameraSetting.CameraChannel} ch)");
                     });
                 })
-                .AddTo(this.disposable);
+                .AddTo(this.Disposable);
         }
 
-        public ReactivePropertySlim<BitmapSource> FrameImage { get; }
+        public ReactivePropertySlim<BitmapSource> FrameImage { get; private set; }
 
-        public ReactivePropertySlim<string> CameraName { get; }
+        public ReactivePropertySlim<string> CameraName { get; private set; }
 
-        public AsyncReactiveCommand ImageButtonClickCommand { get; }
+        public AsyncReactiveCommand ImageButtonClickCommand { get; private set; }
+
+        public void StopCapture()
+        {
+            if (this._networkCameraClient != null)
+            {
+                this._networkCameraClient.StopCapture();
+            }
+
+            if (this._usbCameraClient != null)
+            {
+                this._usbCameraClient.StopCapture();
+            }
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace OnvifNetworkCameraClient.Models.RawFramesDecoding
     {
         DecodedVideoFrame TryDecode(RawVideoFrame rawVideoFrame);
 
+        void SetOutputFolder(string outputFolder);
+
         void Dispose();
     }
 }

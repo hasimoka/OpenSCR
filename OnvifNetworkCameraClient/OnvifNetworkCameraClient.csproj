@@ -30,6 +30,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mictlanix.DotNet.OnvifClient, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OnvifClient.Core.1.0.2\lib\netstandard2.0\Mictlanix.DotNet.OnvifClient.dll</HintPath>
@@ -58,6 +76,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Reactive, Version=4.4.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.4.4.1\lib\net46\System.Reactive.dll</HintPath>
     </Reference>
@@ -98,11 +117,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\H264FrameRecorder.cs" />
+    <Compile Include="Models\H264FrameParser.cs" />
     <Compile Include="Models\IWsDiscoveryClient.cs" />
     <Compile Include="Models\NetworkCameraClient.cs" />
     <Compile Include="Models\IVideoSource.cs" />
     <Compile Include="Models\PtzDirection.cs" />
     <Compile Include="Models\RawFramesDecoding\DecodedFrames\DecodedVideoFrame.cs" />
+    <Compile Include="Models\RawFramesDecoding\DecodedFrames\RawH264FrameRecordItem.cs" />
     <Compile Include="Models\RawFramesDecoding\DecoderException.cs" />
     <Compile Include="Models\RawFramesDecoding\H264VideoDecoder.cs" />
     <Compile Include="Models\RawFramesDecoding\IVideoDecoder.cs" />

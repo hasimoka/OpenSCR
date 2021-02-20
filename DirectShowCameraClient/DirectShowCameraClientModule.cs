@@ -12,7 +12,6 @@ namespace DirectShowCameraClient
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IUsbCameraClient, UsbCameraClient>();
 		}
 	}
 }

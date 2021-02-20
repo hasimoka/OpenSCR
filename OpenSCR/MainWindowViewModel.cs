@@ -9,6 +9,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using MainWindowServices;
 using System.Web.UI;
+using Microsoft.Extensions.Logging;
 
 namespace OpenSCR
 {

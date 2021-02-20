@@ -65,11 +65,12 @@ namespace OptionViews.AdvancedCameraSettings
                 })
                 .AddTo(this.disposable);
 
-            this.AcceptCommand = new ReactiveCommand()
-                .WithSubscribe(() =>
+            this.AcceptCommand = new AsyncReactiveCommand()
+                .WithSubscribe(async () =>
                 {
                     this.IsProgressRingDialogOpen.Value = true;
-                    this.onAcceptButtonClickAsync();
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    await this.onAcceptButtonClickAsync();
                     this.IsProgressRingDialogOpen.Value = false;
 
 
@@ -101,7 +102,7 @@ namespace OptionViews.AdvancedCameraSettings
 
         public ReactiveCommand ChangeSelectedCameraType { get; }
 
-        public ReactiveCommand AcceptCommand { get; }
+        public AsyncReactiveCommand AcceptCommand { get; }
 
         public ReactiveCommand CancelCommand { get; }
 
@@ -115,7 +116,7 @@ namespace OptionViews.AdvancedCameraSettings
                 // 設定を画面に反映させる
                 this.CameraName.Value = cameraSetting.CameraName;
 
-                if (cameraSetting.NetowrkCameraSetting != null)
+                if (cameraSetting.NetworkCameraSetting != null)
                 {
                     // ネットワークカメラ設定の場合
                     foreach (var item in CameraTypeItems)
@@ -126,10 +127,10 @@ namespace OptionViews.AdvancedCameraSettings
                         }
                     }
 
-                    this.networkCameraSettingService.UserName.Value = cameraSetting.NetowrkCameraSetting.UserName;
-                    this.networkCameraSettingService.Password.Value = cameraSetting.NetowrkCameraSetting.Password;
-                    this.networkCameraSettingService.IsLoggedIn.Value = cameraSetting.NetowrkCameraSetting.IsLoggedIn;
-                    if (cameraSetting.NetowrkCameraSetting.IsLoggedIn)
+                    this.networkCameraSettingService.UserName.Value = cameraSetting.NetworkCameraSetting.UserName;
+                    this.networkCameraSettingService.Password.Value = cameraSetting.NetworkCameraSetting.Password;
+                    this.networkCameraSettingService.IsLoggedIn.Value = cameraSetting.NetworkCameraSetting.IsLoggedIn;
+                    if (cameraSetting.NetworkCameraSetting.IsLoggedIn)
                     {
                         this.regionManager.RequestNavigate("CameraLoginSettingRegion", "CameraLogoutSettingPanel");
                     }
@@ -139,7 +140,7 @@ namespace OptionViews.AdvancedCameraSettings
                     }
 
                     var ipCameraListPanelParameter = new NavigationParameters();
-                    ipCameraListPanelParameter.Add("NetworkCameraSetting", cameraSetting.NetowrkCameraSetting);
+                    ipCameraListPanelParameter.Add("NetworkCameraSetting", cameraSetting.NetworkCameraSetting);
                     this.regionManager.RequestNavigate("CameraListRegion", "IpCameraListPanel", ipCameraListPanelParameter);
                     this.regionManager.RequestNavigate("CameraSettingRegion", "IpCameraSettingPanel");
                 }
@@ -219,7 +220,7 @@ namespace OptionViews.AdvancedCameraSettings
             }
         }
 
-        private async void onAcceptButtonClickAsync()
+        private async Task onAcceptButtonClickAsync()
         {
             try
             {
@@ -260,7 +261,7 @@ namespace OptionViews.AdvancedCameraSettings
                     networkCameraSetting.CameraHeight = profile.VideoHeight;
                     networkCameraSetting.CameraWidth = profile.VideoWidth;
 
-                    setting.NetowrkCameraSetting = networkCameraSetting;
+                    setting.NetworkCameraSetting = networkCameraSetting;
                 }
                 else if (this.SelectedCameraType.Value.Type == CameraType.UsbCamera)
                 {
