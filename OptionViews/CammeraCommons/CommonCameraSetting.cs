@@ -36,12 +36,12 @@ namespace OptionViews.CammeraCommons
                 .AddTo(this.disposable);
 
             var encodingValue = string.Empty;
-            if (cameraSetting.NetworkCameraSetting != null)
+            if (cameraSetting.NetworkCameraSettings != null)
             {
                 // "EncodingFormat(IP Address)"のフォーマット
-                encodingValue = $"{cameraSetting.NetworkCameraSetting.Encoding} ({cameraSetting.NetworkCameraSetting.IpAddress})";
+                encodingValue = $"{cameraSetting.NetworkCameraSettings.Encoding} ({cameraSetting.NetworkCameraSettings.IpAddress})";
             }
-            else if (cameraSetting.UsbCameraSetting != null)
+            else if (cameraSetting.UsbCameraSettings != null)
             {
                 encodingValue = "USB";
             }
@@ -49,13 +49,13 @@ namespace OptionViews.CammeraCommons
                 .AddTo(this.disposable);
 
             var resoluutionValue = string.Empty;
-            if (cameraSetting.NetworkCameraSetting != null)
+            if (cameraSetting.NetworkCameraSettings != null)
             {
-                resoluutionValue = $"{cameraSetting.NetworkCameraSetting.CameraWidth} x {cameraSetting.NetworkCameraSetting.CameraHeight}";
+                resoluutionValue = $"{cameraSetting.NetworkCameraSettings.CameraWidth} x {cameraSetting.NetworkCameraSettings.CameraHeight}";
             }
-            else if (cameraSetting.UsbCameraSetting != null)
+            else if (cameraSetting.UsbCameraSettings != null)
             {
-                resoluutionValue = $"{cameraSetting.UsbCameraSetting.CameraWidth} x {cameraSetting.UsbCameraSetting.CameraHeight}";
+                resoluutionValue = $"{cameraSetting.UsbCameraSettings.CameraWidth} x {cameraSetting.UsbCameraSettings.CameraHeight}";
             }
             this.Resolution = new ReactivePropertySlim<string>(resoluutionValue)
                 .AddTo(this.disposable);
@@ -94,7 +94,7 @@ namespace OptionViews.CammeraCommons
         private void onDeleteCameraSettingButtonClick()
         {
             Console.WriteLine("Call onDeleteCameraSettingButtonClick() method.");
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
+            var dbAccessor = this.container.Resolve<DatabaseAccessor>();
             dbAccessor.DeleteCameraSetting(this.cameraSetting);
 
             this.commonCameraSettingService.CameraSettings.Remove(this);

@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace DirectShowCameraClient.Models
 {
-    public class UsbCameraClient : BindableModelBase
+    public class UsbCameraClient : BindableModelBase, ICameraClient
     {
         private readonly DirectShowCaputer _capture;
 
@@ -33,8 +33,6 @@ namespace DirectShowCameraClient.Models
             this._isRunning = false;
         }
 
-
-
         public UsbCameraClient(int cameraChannel)
         {
             this._cameraChannel = cameraChannel;
@@ -49,7 +47,34 @@ namespace DirectShowCameraClient.Models
             this._isRunning = false;
         }
 
-        public ReactivePropertySlim<BitmapSource> FrameImage { get; set; }
+        public ReactivePropertySlim<BitmapSource> FrameImage { get; }
+
+        public void StartCapture(CameraSetting cameraSettings)
+        {
+            if (cameraSettings?.UsbCameraSettings == null)
+                return;
+            
+            if (this._isRunning)
+                this.StopCapture();
+
+            this._capture.Start(
+                cameraSettings.UsbCameraSettings.DevicePath, 
+                cameraSettings.UsbCameraSettings.CameraWidth, 
+                cameraSettings.UsbCameraSettings.CameraHeight, 
+                cameraSettings.UsbCameraSettings.FrameRate);
+            this._isRunning = true;
+        }
+
+        public void StopCapture()
+        {
+            this._capture.Stop();
+            this._isRunning = false;
+        }
+
+        public void ClearFrameImage()
+        {
+            this._capture.ClearFrameImage();
+        }
 
         public void FindUsbCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveredAction)
         {
@@ -86,26 +111,6 @@ namespace DirectShowCameraClient.Models
         public async Task<List<UsbCameraVideoInfo>> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
         {
             return await Task.Run(() => DirectShowCaputer.GetVideoInfos(captureDevice));
-        }
-
-        public void StartCapture(string devicePath, int width, int height, short bitCount)
-        {
-            if (this._isRunning)
-                this.StopCapture();
-
-            this._capture.Start(devicePath, width, height, bitCount);
-            this._isRunning = true;
-        }
-
-        public void StopCapture()
-        {
-            this._capture.Stop();
-            this._isRunning = false;
-        }
-
-        public void ClearFrameImage()
-        {
-            this._capture.ClearFrameImage();
         }
     }
 }

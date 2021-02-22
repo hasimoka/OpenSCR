@@ -18,7 +18,7 @@ using System.Collections.Concurrent;
 
 namespace OnvifNetworkCameraClient.Models
 {
-    public class NetworkCameraClient : BindableModelBase
+    public class NetworkCameraClient : BindableModelBase, ICameraClient
     {
         private const string RtspPrefix = "rtsp://";
         private const string HttpPrefix = "http://";
@@ -79,9 +79,9 @@ namespace OnvifNetworkCameraClient.Models
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; }
 
-        public void StartCapture(string mediaUrl, string loginName, string password)
+        public void StartCapture(CameraSetting cameraSettings)
         {
-            if (mediaUrl == null)
+            if (cameraSettings?.NetworkCameraSettings == null)
                 return;
 
             if (_isRunning)
@@ -90,7 +90,7 @@ namespace OnvifNetworkCameraClient.Models
             if (_rawFramesSource != null)
                 return;
 
-            var address = mediaUrl;
+            var address = cameraSettings.NetworkCameraSettings.StreamUri;
 
             if (!address.StartsWith(RtspPrefix) && !address.StartsWith(HttpPrefix))
                 address = RtspPrefix + address;
@@ -98,7 +98,7 @@ namespace OnvifNetworkCameraClient.Models
             if (!Uri.TryCreate(address, UriKind.Absolute, out Uri deviceUri))
                 throw new Exception("Invalid device address.");
 
-            var credential = new NetworkCredential(loginName, password);
+            var credential = new NetworkCredential(cameraSettings.NetworkCameraSettings.UserName, cameraSettings.NetworkCameraSettings.Password);
 
             var connectionParameters = !string.IsNullOrEmpty(deviceUri.UserInfo) ? new ConnectionParameters(deviceUri) : new ConnectionParameters(deviceUri, credential);
             connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
@@ -123,6 +123,22 @@ namespace OnvifNetworkCameraClient.Models
             _isRunning = false;
 
             Task.Delay(TimeSpan.FromMilliseconds(100));
+        }
+
+        public void ClearFrameImage()
+        {
+            // 初期表示用の画像を読み込む
+            using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                FrameImage.Value = bitmap;
+            }
         }
 
         public async Task<List<OnvifNetworkCameraProfile>> GetCameraDeviceInfoAsync(string host, string userName, string password)
@@ -189,11 +205,6 @@ namespace OnvifNetworkCameraClient.Models
             var result = false;
 
             var media = await OnvifClientFactory.CreateMediaClientAsync(host, userName, password);
-            //var streamSetup = new StreamSetup
-            //{
-            //    Stream = StreamType.RTPUnicast,
-            //    Transport = new Transport { Protocol = TransportProtocol.UDP }
-            //};
 
             var profiles = await media.GetProfilesAsync();
 
@@ -388,22 +399,6 @@ namespace OnvifNetworkCameraClient.Models
             catch (Exception ex)
             {
                 Console.WriteLine($"Throw exception: {ex}");
-            }
-        }
-
-        public void ClearFrameImage()
-        {
-            // 初期表示用の画像を読み込む
-            using (var stream = new MemoryStream(File.ReadAllBytes("Images/no_image_w.png")))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.StreamSource = stream;
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-
-                FrameImage.Value = bitmap;
             }
         }
 

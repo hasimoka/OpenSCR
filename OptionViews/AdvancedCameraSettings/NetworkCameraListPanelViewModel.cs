@@ -100,7 +100,7 @@ namespace OptionViews.AdvancedCameraSettings
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            var networkCameraSetting = navigationContext.Parameters["NetworkCameraSetting"] as NetworkCameraSetting;
+            var networkCameraSetting = navigationContext.Parameters["NetworkCameraSettings"] as NetworkCameraSetting;
             this.SetInitializeParameterCommand.Execute(networkCameraSetting);
         }
 
@@ -129,7 +129,7 @@ namespace OptionViews.AdvancedCameraSettings
 
                     this.networkCameraSettingService.SelectedNetworkCameraProfile.Value = firstProfile;
                     this.networkCameraSettingService.FrameRateLimit.Value = firstProfile.FrameRateLimit;
-                    this.networkCameraSettingService.BitrateLimit.Value = firstProfile.BitrateLimite;
+                    this.networkCameraSettingService.BitRateLimit.Value = firstProfile.BitrateLimite;
                 }
                 catch (Exception ex)
                 {
@@ -142,7 +142,7 @@ namespace OptionViews.AdvancedCameraSettings
 
                 this.networkCameraSettingService.SelectedNetworkCameraProfile.Value = null;
                 this.networkCameraSettingService.FrameRateLimit.Value = 0;
-                this.networkCameraSettingService.BitrateLimit.Value = 0;
+                this.networkCameraSettingService.BitRateLimit.Value = 0;
             }
         }
 
@@ -214,7 +214,7 @@ namespace OptionViews.AdvancedCameraSettings
                         if (profile.ProfileToken == selectedProfileToken)
                         {
                             this.networkCameraSettingService.FrameRateLimit.Value = profile.FrameRateLimit;
-                            this.networkCameraSettingService.BitrateLimit.Value = profile.BitrateLimite;
+                            this.networkCameraSettingService.BitRateLimit.Value = profile.BitrateLimite;
 
                             this.networkCameraSettingService.SelectedNetworkCameraProfile.Value = profile;
                         }

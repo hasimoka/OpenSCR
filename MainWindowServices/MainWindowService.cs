@@ -13,32 +13,38 @@ namespace MainWindowServices
 	/// </summary>
 	public class MainWindowService : BindableModelBase, IMainWindowService
 	{
-		/// <summary>HamburgerMenuのDisplayModeを取得・設定します</summary>
-		public ReactivePropertySlim<SplitViewDisplayMode> HamburgerMenuDisplayMode { get; set; }
-
-		/// <summary>HamburgerMenuのIsPaneOpenを取得・設定します</summary>
-		public ReactivePropertySlim<bool> IsHamburgerMenuPanelOpened { get; set; }
-
-		/// <summary>TransitioningContentControlのTransitionを取得・設定します</summary>
-		public ReactivePropertySlim<TransitionType> ContentControlTransition { get; set; }
-
-		/// <summary>ProgressRingDialogのIsOpenを取得・設定します</summary>
-		public ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
-
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		public MainWindowService()
 		{
-			this.HamburgerMenuDisplayMode = new ReactivePropertySlim<SplitViewDisplayMode>(SplitViewDisplayMode.CompactOverlay)
-				.AddTo(this.Disposable);
-			this.IsHamburgerMenuPanelOpened = new ReactivePropertySlim<bool>(false)
-				.AddTo(this.Disposable);
-			this.ContentControlTransition = new ReactivePropertySlim<TransitionType>(TransitionType.Default)
+			HamburgerMenuDisplayMode = new ReactivePropertySlim<SplitViewDisplayMode>(SplitViewDisplayMode.CompactOverlay)
 				.AddTo(this.Disposable);
 
-			this.IsProgressRingDialogOpen = new ReactivePropertySlim<bool>(false)
+			IsHamburgerMenuPanelOpened = new ReactivePropertySlim<bool>(false)
 				.AddTo(this.Disposable);
-		}
-	}
+
+			ContentControlTransition = new ReactivePropertySlim<TransitionType>(TransitionType.Default)
+				.AddTo(this.Disposable);
+
+			IsProgressRingDialogOpen = new ReactivePropertySlim<bool>(false)
+				.AddTo(this.Disposable);
+
+            CaptureCameraClients = new Dictionary<int, CaptureCameraClient>();
+        }
+
+        /// <summary>HamburgerMenuのDisplayModeを取得・設定します</summary>
+        public ReactivePropertySlim<SplitViewDisplayMode> HamburgerMenuDisplayMode { get; set; }
+
+        /// <summary>HamburgerMenuのIsPaneOpenを取得・設定します</summary>
+        public ReactivePropertySlim<bool> IsHamburgerMenuPanelOpened { get; set; }
+
+        /// <summary>TransitioningContentControlのTransitionを取得・設定します</summary>
+        public ReactivePropertySlim<TransitionType> ContentControlTransition { get; set; }
+
+        /// <summary>ProgressRingDialogのIsOpenを取得・設定します</summary>
+        public ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
+
+        public Dictionary<int, CaptureCameraClient> CaptureCameraClients { get; }
+    }
 }

@@ -15,14 +15,14 @@ namespace VideoViews.ViewModels
 {
     class VideoViewPanelViewModel : HalationGhostViewModelBase, INavigationAware
     {
-        private IContainerProvider container;
+        private readonly IContainerProvider _container;
 
-        private IMainWindowService mainWindowService;
+        private readonly IMainWindowService _mainWindowService;
 
         public VideoViewPanelViewModel(IRegionManager regionMan, IContainerProvider containerProvider, IMainWindowService windowService) : base(regionMan)
         {
-            this.container = containerProvider;
-            this.mainWindowService = windowService;
+            this._container = containerProvider;
+            this._mainWindowService = windowService;
 
             this.ConnectedDeviceCount = new ReactivePropertySlim<string>(string.Empty)
                 .AddTo(this.disposable);
@@ -38,37 +38,41 @@ namespace VideoViews.ViewModels
         public bool IsNavigationTarget(NavigationContext navigationContext) { return true; }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) 
-        { 
-            foreach (var item in this.CameraViewItems)
-            {
-                item.StopCapture();
-            }
+        {
+            ClearCameraViewItems();
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) 
         {
-            this.CameraViewItems.Clear();
+            ClearCameraViewItems();
 
             // DBからカメラ設定を取得する
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
-            var loadedSettings = dbAccessor.FindCameraSettings();
-
-            var settingCount = loadedSettings.Count;
-
+            var settingCount = _mainWindowService.CaptureCameraClients.Count;
             var connectedCount = 0;
-            foreach (var loadedSetting in loadedSettings)
+            foreach (var cameraClientPair in _mainWindowService.CaptureCameraClients)
             {
-                var setting = new CameraViewItemViewModel(loadedSetting);
+                
+                var setting = new CameraViewItemViewModel(cameraClientPair.Value);
                 this.CameraViewItems.Add(setting);
                 connectedCount += 1;
             }
 
-            this.SetConnectedDeivceCount(settingCount, connectedCount);
+            this.SetConnectedDeviceCount(settingCount, connectedCount);
         }
 
-        private void SetConnectedDeivceCount(int settingCount, int connectedCount)
+        private void SetConnectedDeviceCount(int settingCount, int connectedCount)
         {
             this.ConnectedDeviceCount.Value = $"{connectedCount} / {settingCount}";
+        }
+
+        private void ClearCameraViewItems()
+        {
+            foreach (var cameraViewItem in CameraViewItems)
+            {
+                cameraViewItem.Dispose();
+            }
+
+            CameraViewItems.Clear();
         }
     }
 }

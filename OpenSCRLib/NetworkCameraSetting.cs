@@ -53,7 +53,7 @@ namespace OpenSCRLib
 
         public override string ToString()
         {
-            return $"NetworkCameraSetting(UserName={this.UserName}, Password={this.Password}, IsLoggedIn={this.IsLoggedIn}, IpAddress={this.IpAddress}, Encoding={this.Encoding}, ProductName={this.ProductName}, ProfileToken={this.ProfileToken}, StreamUri={this.StreamUri}, CameraHeight={this.CameraHeight}, CameraWidth={this.CameraWidth})";
+            return $"NetworkCameraSettings(UserName={this.UserName}, Password={this.Password}, IsLoggedIn={this.IsLoggedIn}, IpAddress={this.IpAddress}, Encoding={this.Encoding}, ProductName={this.ProductName}, ProfileToken={this.ProfileToken}, StreamUri={this.StreamUri}, CameraHeight={this.CameraHeight}, CameraWidth={this.CameraWidth})";
         }
     }
 }

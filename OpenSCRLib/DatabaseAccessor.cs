@@ -6,18 +6,18 @@ using System.Linq;
 
 namespace OpenSCRLib
 {
-    public class DatabaseAccesser
+    public class DatabaseAccessor
     {
-        private const string FILE_NAME = ".\\DB\\openSCR.db";
+        private const string DataBaseFileName = ".\\DB\\openSCR.db";
 
-        private const string CAMERA_SETTING_TABLE = "camera_settings";
+        private const string CameraSettingTable = "camera_settings";
 
-        public DatabaseAccesser()
+        public DatabaseAccessor()
         {
             // DBファイルを格納するフォルダの存在チェック／初期作成
-            if (!Directory.Exists(Path.GetDirectoryName(FILE_NAME)))
+            if (!Directory.Exists(Path.GetDirectoryName(DataBaseFileName)))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(FILE_NAME));
+                Directory.CreateDirectory(Path.GetDirectoryName(DataBaseFileName));
             }
         }
 
@@ -27,9 +27,9 @@ namespace OpenSCRLib
 
             try
             {
-                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
                     var records = col.FindAll();
                     if (records.Count() > 0)
                     {
@@ -56,9 +56,9 @@ namespace OpenSCRLib
 
             try
             {
-                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
                     cameraSettings = col.FindAll().ToList();
                 }
             }
@@ -76,9 +76,9 @@ namespace OpenSCRLib
 
             try
             {
-                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
                     cameraSetting = col.FindOne(x => x.CameraChannel == cameraChannel);
                 }
             }
@@ -96,9 +96,9 @@ namespace OpenSCRLib
 
             try 
             {
-                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
                     result = col.Upsert(cameraSetting);
                 }
             }
@@ -116,9 +116,9 @@ namespace OpenSCRLib
 
             try
             {
-                using (var litedb = new LiteDatabase($"Filename={FILE_NAME}; Mode=Exclusive;"))
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
-                    var col = litedb.GetCollection<CameraSetting>(CAMERA_SETTING_TABLE);
+                    var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
                     result = col.Delete(cameraSetting.Id);
                 }
             }

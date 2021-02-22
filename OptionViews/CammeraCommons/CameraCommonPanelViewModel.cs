@@ -68,7 +68,7 @@ namespace OptionViews.CammeraCommons
             this.CameraSettings.Clear();
 
             // DBからカメラ設定を取得する
-            var dbAccessor = this.container.Resolve<DatabaseAccesser>();
+            var dbAccessor = this.container.Resolve<DatabaseAccessor>();
             var loadedSettings = dbAccessor.FindCameraSettings();
 
             foreach (var loadedSetting in loadedSettings)

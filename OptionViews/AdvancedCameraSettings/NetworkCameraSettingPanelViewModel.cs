@@ -49,7 +49,7 @@ namespace OptionViews.AdvancedCameraSettings
             this.FrameRateLimit = this.networkCameraSettingService.FrameRateLimit
                 .AddTo(this.disposable);
 
-            this.BitrateLimit = this.networkCameraSettingService.BitrateLimit
+            this.BitrateLimit = this.networkCameraSettingService.BitRateLimit
                 .AddTo(this.disposable);
 
             this.UpMoveCommand = this.SelectedNetworkCameraProfile

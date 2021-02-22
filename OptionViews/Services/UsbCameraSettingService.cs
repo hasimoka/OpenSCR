@@ -17,13 +17,13 @@ namespace OptionViews.Services
     /// </summary>
     public class UsbCameraSettingService : BindableModelBase, IUsbCameraSettingService
     {
-        private UsbCameraClient cameraClient;
+        private readonly UsbCameraClient _cameraClient;
 
         public UsbCameraSettingService()
         {
-            this.cameraClient = new UsbCameraClient();
+            this._cameraClient = new UsbCameraClient();
 
-            this.FrameImage = this.cameraClient.FrameImage
+            this.FrameImage = this._cameraClient.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(this.Disposable);
 
@@ -57,9 +57,9 @@ namespace OptionViews.Services
 
         public void Clear()
         {
-            this.cameraClient.StopCapture();
+            this._cameraClient.StopCapture();
 
-            this.cameraClient.ClearFrameImage();
+            this._cameraClient.ClearFrameImage();
 
             this.CameraDeviceListSource.Clear();
             this.CameraDeviceSelectedItem.Value = null;
@@ -70,7 +70,7 @@ namespace OptionViews.Services
 
         public void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction)
         {
-            this.cameraClient.FindUsbCaptureDeviceAsync(discoveriedAction);
+            this._cameraClient.FindUsbCaptureDeviceAsync(discoveriedAction);
         }
 
         public async Task RefreshCameraList()
@@ -87,8 +87,7 @@ namespace OptionViews.Services
                 foreach (var captureDevice in captureDevices.OrderBy(captureDevice => captureDevice.Name))
                 {
 
-                    var item = new UsbCameraDeviceListItemViewModel();
-                    item.CaptureDevice = captureDevice;
+                    var item = new UsbCameraDeviceListItemViewModel {CaptureDevice = captureDevice};
 
                     this.CameraDeviceListSource.Add(item);
 
@@ -136,26 +135,34 @@ namespace OptionViews.Services
 
         public async Task<List<UsbCameraDeviceInfo>> DiscoveryCaptureDeviceAsync()
         {
-            return await this.cameraClient.DiscoveryCaptureDeviceAsync();
+            return await this._cameraClient.DiscoveryCaptureDeviceAsync();
         }
 
         public async Task<List<UsbCameraVideoInfo>> GetVideoInfosAsync(UsbCameraDeviceInfo captureDevice)
         {
-            return await this.cameraClient.GetVideoInfosAsync(captureDevice);
+            return await this._cameraClient.GetVideoInfosAsync(captureDevice);
         }
 
         public void StartCapture()
         {
-            this.cameraClient.StartCapture(
-                this.CameraDeviceSelectedItem.Value.CaptureDevice.DevicePath, 
-                this.SelectedUsbCameraVideoInfo.Value.Width,
-                this.SelectedUsbCameraVideoInfo.Value.Height,
-                this.SelectedUsbCameraVideoInfo.Value.BitCount);
+            var cameraSettings = new CameraSetting()
+            {
+                UsbCameraSettings = new UsbCameraSetting()
+                {
+                    DevicePath = CameraDeviceSelectedItem.Value.CaptureDevice.DevicePath,
+                    CameraWidth = SelectedUsbCameraVideoInfo.Value.Width,
+                    CameraHeight = SelectedUsbCameraVideoInfo.Value.Height,
+                    FrameRate = SelectedUsbCameraVideoInfo.Value.BitCount
+                }
+
+            };
+
+            this._cameraClient.StartCapture(cameraSettings);
         }
 
         public void StopCapture()
         {
-            this.cameraClient.StopCapture();
+            this._cameraClient.StopCapture();
         }
     }
 }

@@ -10,11 +10,14 @@ using Reactive.Bindings.Extensions;
 using MainWindowServices;
 using System.Web.UI;
 using Microsoft.Extensions.Logging;
+using OpenSCRLib;
+using Prism.Ioc;
+using VideoViews.ViewModels;
 
 namespace OpenSCR
 {
 	/// <summary>MainWindowのVM</summary>
-	public class MainWindowViewModel : HalationGhostViewModelBase
+	public class MainWindowViewModel : HalationGhostViewModelBase, IDisposable
 	{
 		#region プロパティ
 
@@ -67,7 +70,7 @@ namespace OpenSCR
 
 		/// <summary>HamburgerMenuのメニュー項目選択通知イベントハンドラ。</summary>
 		/// <param name="item">選択したメニュー項目を表すHamburgerMenuItemViewModel。</param>
-		private void onSelectedMenu(HamburgerMenuItemViewModel item)
+		private void OnSelectedMenu(HamburgerMenuItemViewModel item)
 		{
 			if (item == null)
 				return;
@@ -79,39 +82,50 @@ namespace OpenSCR
 
 		#region コンストラクタ
 
-		/// <summary>MainWindoサービスを表します。</summary>
-		private IMainWindowService mainWindowService = null;
+		/// <summary>MainWindowサービスを表します。</summary>
+		private IMainWindowService _mainWindowService;
 
 		/// <summary>デフォルトコンストラクタ。</summary>
 		/// <param name="regionMan">IRegionManager。</param>
+		/// <param name="containerProvider">IContainerProvider</param>
 		/// <param name="winService">IMainWindowService。</param>
-		public MainWindowViewModel(IRegionManager regionMan, IMainWindowService winService) : base(regionMan)
+		public MainWindowViewModel(IRegionManager regionMan, IContainerProvider containerProvider, IMainWindowService winService) : base(regionMan)
 		{
-			this.mainWindowService = winService;
+			this._mainWindowService = winService;
 
-			this.initialilzeMenu();
+            // DBからカメラ設定を取得する
+            var dbAccessor = containerProvider.Resolve<DatabaseAccessor>();
+            var loadedSettings = dbAccessor.FindCameraSettings();
+            foreach (var loadedSetting in loadedSettings)
+            {
+                var cameraClient = new CaptureCameraClient(loadedSetting);
+				cameraClient.StartCapture();
+                this._mainWindowService.CaptureCameraClients[loadedSetting.CameraChannel] = cameraClient;
+            }
+
+			this.InitializeMenu();
 
 			this.SelectedMenu = new ReactivePropertySlim<HamburgerMenuItemViewModel>(null)
 				.AddTo(this.disposable);
-			this.SelectedMenu.Subscribe(i => this.onSelectedMenu(i));
+			this.SelectedMenu.Subscribe(i => this.OnSelectedMenu(i));
 
 			this.SelectedMenuIndex = new ReactivePropertySlim<int>(-1)
 				.AddTo(this.disposable);
 
 			this.SelectedOption = new ReactivePropertySlim<HamburgerMenuItemViewModel>(null)
 				.AddTo(this.disposable);
-			this.SelectedOption.Subscribe(o => this.onSelectedMenu(o));
+			this.SelectedOption.Subscribe(o => this.OnSelectedMenu(o));
 
 			this.SelectedOptionIndex = new ReactivePropertySlim<int>(-1)
 				.AddTo(this.disposable);
 
-			this.ContentControlTransition = this.mainWindowService.ContentControlTransition
+			this.ContentControlTransition = this._mainWindowService.ContentControlTransition
 				.ToReadOnlyReactivePropertySlim()
 				.AddTo(this.disposable);
-			this.HamburgerMenuDisplayMode = this.mainWindowService.HamburgerMenuDisplayMode
+			this.HamburgerMenuDisplayMode = this._mainWindowService.HamburgerMenuDisplayMode
 				.ToReadOnlyReactivePropertySlim()
 				.AddTo(this.disposable);
-			this.IsHamburgerMenuPanelOpened = this.mainWindowService.IsHamburgerMenuPanelOpened
+			this.IsHamburgerMenuPanelOpened = this._mainWindowService.IsHamburgerMenuPanelOpened
 				.AddTo(this.disposable);
 
 			this.ContentRendered = new ReactiveCommand()
@@ -121,12 +135,22 @@ namespace OpenSCR
 			this.DialogView = new ReactiveProperty<UserControl>()
 				.AddTo(this.disposable);
 
-			this.IsProgressRingDialogOpen = this.mainWindowService.IsProgressRingDialogOpen
+			this.IsProgressRingDialogOpen = this._mainWindowService.IsProgressRingDialogOpen
 				.AddTo(this.disposable);
 		}
 
+        public new void Dispose()
+        {
+            foreach (var cameraClientPair in _mainWindowService.CaptureCameraClients)
+            {
+                cameraClientPair.Value.Dispose();                
+            }
+
+			base.Dispose();
+        }
+
 		/// <summary>HamburgerMenuのメニュー項目を初期化します。</summary>
-		private void initialilzeMenu()
+		private void InitializeMenu()
 		{
 			this.MenuItems.Add(new HamburgerMenuItemViewModel(PackIconFontAwesomeKind.VideoSolid, "ビデオ一覧", "VideoViewPanel"));
 

@@ -86,7 +86,7 @@ namespace OptionViews.AdvancedCameraSettings
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            var usbCameraSetting = navigationContext.Parameters["UsbCameraSetting"] as UsbCameraSetting;
+            var usbCameraSetting = navigationContext.Parameters["UsbCameraSettings"] as UsbCameraSetting;
             this.SetInitializeParameterCommand.Execute(usbCameraSetting);
         }
 

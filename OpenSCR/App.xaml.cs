@@ -50,7 +50,7 @@ namespace OpenSCR
             containerRegistry.RegisterSingleton<IMainWindowService, MainWindowService>();
 
             containerRegistry.RegisterInstance(this.Container);
-            containerRegistry.RegisterInstance(typeof(DatabaseAccesser), new DatabaseAccesser());
+            containerRegistry.RegisterInstance(typeof(DatabaseAccessor), new DatabaseAccessor());
         }
     }
 }

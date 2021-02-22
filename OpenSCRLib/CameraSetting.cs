@@ -9,7 +9,7 @@ namespace OpenSCRLib
         public CameraSetting() { }
 
         [BsonCtor]
-        public CameraSetting(ObjectId id, int cameraChannel, string cameraName, NetworkCameraSetting networkCameraSetting, UsbCameraSetting usbCameraSetting)
+        public CameraSetting(ObjectId id, int cameraChannel, string cameraName, NetworkCameraSetting networkCameraSettings, UsbCameraSetting usbCameraSettings)
         {
             this.Id = id;
 
@@ -17,9 +17,9 @@ namespace OpenSCRLib
 
             this.CameraName = cameraName;
 
-            this.NetworkCameraSetting = networkCameraSetting;
+            this.NetworkCameraSettings = networkCameraSettings;
 
-            this.UsbCameraSetting = usbCameraSetting;
+            this.UsbCameraSettings = usbCameraSettings;
         }
 
         public ObjectId Id { get; set; }
@@ -28,15 +28,15 @@ namespace OpenSCRLib
 
         public string CameraName { get; set; }
 
-        public NetworkCameraSetting NetworkCameraSetting { get; set; }
+        public NetworkCameraSetting NetworkCameraSettings { get; set; }
 
-        public UsbCameraSetting UsbCameraSetting { get; set; }
+        public UsbCameraSetting UsbCameraSettings { get; set; }
 
         public void Dispose() { }
 
         public override string ToString()
         {
-            return $"CameraSetting(Id={this.Id}, CameraChannel={this.CameraChannel}, CameraName={this.CameraName}, NetworkCameraSetting={this.NetworkCameraSetting}, UsbCameraSetting={this.UsbCameraSetting}";
+            return $"CameraSetting(Id={this.Id}, CameraChannel={this.CameraChannel}, CameraName={this.CameraName}, NetworkCameraSettings={this.NetworkCameraSettings}, UsbCameraSettings={this.UsbCameraSettings}";
         }
     }
 }

@@ -60,7 +60,8 @@ namespace OnvifNetworkCameraClient.Models.RawFramesDecoding
             var jstZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
             var jstTimestamp = TimeZoneInfo.ConvertTimeFromUtc(rawVideoFrame.Timestamp, jstZoneInfo);
 
-            this.recorder.AddFrame(new RawH264FrameRecordItem(jstTimestamp, frame, spsPpsFrame));
+            if (this.recorder != null)
+                this.recorder.AddFrame(new RawH264FrameRecordItem(jstTimestamp, frame, spsPpsFrame));
 
             return new DecodedVideoFrame(frameImage);
         }

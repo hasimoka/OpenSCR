@@ -116,7 +116,7 @@ namespace OptionViews.AdvancedCameraSettings
                 // 設定を画面に反映させる
                 this.CameraName.Value = cameraSetting.CameraName;
 
-                if (cameraSetting.NetworkCameraSetting != null)
+                if (cameraSetting.NetworkCameraSettings != null)
                 {
                     // ネットワークカメラ設定の場合
                     foreach (var item in CameraTypeItems)
@@ -127,10 +127,10 @@ namespace OptionViews.AdvancedCameraSettings
                         }
                     }
 
-                    this.networkCameraSettingService.UserName.Value = cameraSetting.NetworkCameraSetting.UserName;
-                    this.networkCameraSettingService.Password.Value = cameraSetting.NetworkCameraSetting.Password;
-                    this.networkCameraSettingService.IsLoggedIn.Value = cameraSetting.NetworkCameraSetting.IsLoggedIn;
-                    if (cameraSetting.NetworkCameraSetting.IsLoggedIn)
+                    this.networkCameraSettingService.UserName.Value = cameraSetting.NetworkCameraSettings.UserName;
+                    this.networkCameraSettingService.Password.Value = cameraSetting.NetworkCameraSettings.Password;
+                    this.networkCameraSettingService.IsLoggedIn.Value = cameraSetting.NetworkCameraSettings.IsLoggedIn;
+                    if (cameraSetting.NetworkCameraSettings.IsLoggedIn)
                     {
                         this.regionManager.RequestNavigate("CameraLoginSettingRegion", "CameraLogoutSettingPanel");
                     }
@@ -140,11 +140,11 @@ namespace OptionViews.AdvancedCameraSettings
                     }
 
                     var ipCameraListPanelParameter = new NavigationParameters();
-                    ipCameraListPanelParameter.Add("NetworkCameraSetting", cameraSetting.NetworkCameraSetting);
+                    ipCameraListPanelParameter.Add("NetworkCameraSettings", cameraSetting.NetworkCameraSettings);
                     this.regionManager.RequestNavigate("CameraListRegion", "IpCameraListPanel", ipCameraListPanelParameter);
                     this.regionManager.RequestNavigate("CameraSettingRegion", "IpCameraSettingPanel");
                 }
-                else if (cameraSetting.UsbCameraSetting != null)
+                else if (cameraSetting.UsbCameraSettings != null)
                 {
                     // USBカメラ設定の場合
                     foreach (var item in CameraTypeItems)
@@ -156,7 +156,7 @@ namespace OptionViews.AdvancedCameraSettings
                     }
 
                     var usbCameraListPanelParameter = new NavigationParameters();
-                    usbCameraListPanelParameter.Add("UsbCameraSetting", cameraSetting.UsbCameraSetting);
+                    usbCameraListPanelParameter.Add("UsbCameraSettings", cameraSetting.UsbCameraSettings);
                     this.regionManager.RequestNavigate("CameraListRegion", "UsbCameraListPanel", usbCameraListPanelParameter);
                     this.regionManager.RequestNavigate("CameraSettingRegion", "UsbCameraSettingPanel");
                 }
@@ -164,7 +164,7 @@ namespace OptionViews.AdvancedCameraSettings
             else
             {
                 // 新規作成の場合
-                var dbAccessor = this.container.Resolve<DatabaseAccesser>();
+                var dbAccessor = this.container.Resolve<DatabaseAccessor>();
                 this.CameraChannel.Value = dbAccessor.GetNextCameraChannel();
 
                 this.regionManager.RequestNavigate("CameraListRegion", "IpCameraListPanel");
@@ -230,7 +230,7 @@ namespace OptionViews.AdvancedCameraSettings
                     await this.networkCameraSettingService.SetCameraDeviceInfoAsync();
                 }
 
-                var dbAccessor = this.container.Resolve<DatabaseAccesser>();
+                var dbAccessor = this.container.Resolve<DatabaseAccessor>();
                 var setting = dbAccessor.FindCameraSetting(this.CameraChannel.Value);
                 if (setting == null)
                     setting = new CameraSetting();
@@ -261,7 +261,7 @@ namespace OptionViews.AdvancedCameraSettings
                     networkCameraSetting.CameraHeight = profile.VideoHeight;
                     networkCameraSetting.CameraWidth = profile.VideoWidth;
 
-                    setting.NetworkCameraSetting = networkCameraSetting;
+                    setting.NetworkCameraSettings = networkCameraSetting;
                 }
                 else if (this.SelectedCameraType.Value.Type == CameraType.UsbCamera)
                 {
@@ -273,7 +273,7 @@ namespace OptionViews.AdvancedCameraSettings
                     usbCameraSetting.CameraHeight = this.usbCameraSettingService.SelectedUsbCameraVideoInfo.Value.Height;
                     usbCameraSetting.FrameRate = this.usbCameraSettingService.SelectedUsbCameraVideoInfo.Value.BitCount;
 
-                    setting.UsbCameraSetting = usbCameraSetting;
+                    setting.UsbCameraSettings = usbCameraSetting;
                 }
 
                 // DBにカメラ設定を保存する

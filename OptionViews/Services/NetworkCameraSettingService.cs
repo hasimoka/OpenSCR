@@ -18,19 +18,19 @@ namespace OptionViews.Services
 {
     public class NetworkCameraSettingService : BindableModelBase, INetworkCameraSettingService
     {
-        private NetworkCameraClient cameraClient;
+        private readonly NetworkCameraClient _cameraClient;
 
-        private WsDiscoveryClient wsDiscoveryClient;
+        private readonly WsDiscoveryClient _wsDiscoveryClient;
 
-        private IContainerProvider container = null;
+        private readonly IContainerProvider _container = null;
 
         public NetworkCameraSettingService(IContainerProvider injectionContainer)
         {
-            this.container = injectionContainer;
+            this._container = injectionContainer;
 
-            this.cameraClient = new NetworkCameraClient();
+            this._cameraClient = new NetworkCameraClient();
 
-            this.wsDiscoveryClient = new WsDiscoveryClient();
+            this._wsDiscoveryClient = new WsDiscoveryClient();
 
             this.UserName = new ReactivePropertySlim<string>(string.Empty)
                 .AddTo(this.Disposable);
@@ -41,7 +41,7 @@ namespace OptionViews.Services
             this.IsLoggedIn = new ReactivePropertySlim<bool>(false)
                 .AddTo(this.Disposable);
 
-            this.FrameImage = this.cameraClient.FrameImage
+            this.FrameImage = this._cameraClient.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(this.Disposable);
 
@@ -60,7 +60,7 @@ namespace OptionViews.Services
             this.FrameRateLimit = new ReactiveProperty<int>()
                 .AddTo(this.Disposable);
 
-            this.BitrateLimit = new ReactiveProperty<int>()
+            this.BitRateLimit = new ReactiveProperty<int>()
                 .AddTo(this.Disposable);
 
             this.CanSelectionChangedCameraDeviceListCommand = new ReactivePropertySlim<bool>(true)
@@ -85,14 +85,14 @@ namespace OptionViews.Services
 
         public ReactiveProperty<int> FrameRateLimit { get; }
 
-        public ReactiveProperty<int> BitrateLimit { get; }
+        public ReactiveProperty<int> BitRateLimit { get; }
 
         public ReactivePropertySlim<bool> CanSelectionChangedCameraDeviceListCommand { get; }
 
         public void Clear()
         {
             // キャプチャを停止する
-            this.cameraClient.StopCapture();
+            this._cameraClient.StopCapture();
 
             this.UserName.Value = string.Empty;
 
@@ -100,7 +100,7 @@ namespace OptionViews.Services
 
             this.IsLoggedIn.Value = false;
 
-            this.cameraClient.ClearFrameImage();
+            this._cameraClient.ClearFrameImage();
 
             this.CameraDeviceListSource.Clear();
 
@@ -112,7 +112,7 @@ namespace OptionViews.Services
 
             this.FrameRateLimit.Value = 0;
 
-            this.BitrateLimit.Value = 0;
+            this.BitRateLimit.Value = 0;
         }
 
         public async Task RefreshCameraList()
@@ -131,7 +131,7 @@ namespace OptionViews.Services
                 var endpoints = await this.DiscoveryNetworkVideoTransmitterAsync();
                 foreach (var endpoint in endpoints.OrderBy(device => device.EndpointUri.Host))
                 {
-                    var item = this.container.Resolve<NetworkCameraDeviceListItemViewModel>();
+                    var item = this._container.Resolve<NetworkCameraDeviceListItemViewModel>();
                     item.DeviceName.Value = endpoint.DeviceName;
                     item.IpAddress.Value = endpoint.EndpointUri.Host;
                     item.EndpointUri = endpoint.EndpointUri;
@@ -178,7 +178,7 @@ namespace OptionViews.Services
                             if (profile.ProfileToken == selectedProfileToken.ProfileToken)
                             {
                                 this.FrameRateLimit.Value = profile.FrameRateLimit;
-                                this.BitrateLimit.Value = profile.BitrateLimite;
+                                this.BitRateLimit.Value = profile.BitrateLimite;
 
                                 this.SelectedNetworkCameraProfile.Value = profile;
                             }
@@ -194,7 +194,7 @@ namespace OptionViews.Services
 
         public async Task<List<NetworkCameraEndpoint>> DiscoveryNetworkVideoTransmitterAsync()
         {
-            return await this.wsDiscoveryClient.DiscoveryNetworkVideoTransmitterAsync();
+            return await this._wsDiscoveryClient.DiscoveryNetworkVideoTransmitterAsync();
         }
 
         public async Task<List<OnvifNetworkCameraProfile>> GetCameraDeviceInfoAsync()
@@ -214,7 +214,7 @@ namespace OptionViews.Services
                 host = this.CameraDeviceSelectedItem.Value.IpAddress.Value;
             }
 
-            return await this.cameraClient.GetCameraDeviceInfoAsync(host, name, password);
+            return await this._cameraClient.GetCameraDeviceInfoAsync(host, name, password);
         }
 
         public async Task SetCameraDeviceInfoAsync()
@@ -230,7 +230,7 @@ namespace OptionViews.Services
 
             var host = this.CameraDeviceSelectedItem.Value.IpAddress.Value;
 
-            await this.cameraClient.SetCameraDeviceInfoAsync(host, name, password, this.SelectedNetworkCameraProfile.Value.ProfileToken, this.BitrateLimit.Value, 1, this.FrameRateLimit.Value);
+            await this._cameraClient.SetCameraDeviceInfoAsync(host, name, password, this.SelectedNetworkCameraProfile.Value.ProfileToken, this.BitRateLimit.Value, 1, this.FrameRateLimit.Value);
         }
 
         public async Task MoveAsync(PtzDirection ptzDirection)
@@ -247,26 +247,36 @@ namespace OptionViews.Services
             var host = this.CameraDeviceSelectedItem.Value.IpAddress.Value;
             var profileToken = this.SelectedNetworkCameraProfile.Value.ProfileToken;
 
-            await this.cameraClient.MoveAsync(host, name, password, profileToken, ptzDirection);
+            await this._cameraClient.MoveAsync(host, name, password, profileToken, ptzDirection);
         }
 
         public void StartCapture()
         {
             // カメラにログインするユーザ名／パスワードを取得する
-            var name = string.Empty;
+            var userName = string.Empty;
             var password = string.Empty;
             if (this.IsLoggedIn.Value)
             {
-                name = this.UserName.Value;
+                userName = this.UserName.Value;
                 password = this.Password.Value;
             }
 
-            this.cameraClient.StartCapture(this.SelectedNetworkCameraProfile.Value.StreamUri, name, password);
+            var cameraSettings = new CameraSetting
+            {
+                NetworkCameraSettings = new NetworkCameraSetting
+                {
+                    StreamUri = this.SelectedNetworkCameraProfile.Value.StreamUri,
+                    UserName = userName,
+                    Password = password
+                }
+            };
+
+            this._cameraClient.StartCapture(cameraSettings);
         }
 
         public void StopCapture()
         {
-            this.cameraClient.StopCapture();
+            this._cameraClient.StopCapture();
         }
     }
 }

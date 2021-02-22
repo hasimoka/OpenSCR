@@ -55,6 +55,10 @@
     <Reference Include="Mictlanix.DotNet.OnvifClient, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OnvifClient.Core.1.0.2\lib\netstandard2.0\Mictlanix.DotNet.OnvifClient.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="ReactiveProperty.Core, Version=7.5.1.0, Culture=neutral, PublicKeyToken=910d1732782c71cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveProperty.Core.7.5.1\lib\netstandard2.0\ReactiveProperty.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -85,9 +89,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraSetting.cs" />
+    <Compile Include="ICameraClient.cs" />
     <Compile Include="IpCameraDeviceInfo.cs" />
     <Compile Include="CameraLoginInfo.cs" />
-    <Compile Include="DatabaseAccesser.cs" />
+    <Compile Include="DatabaseAccessor.cs" />
     <Compile Include="NetworkCameraEndpoint.cs" />
     <Compile Include="NetworkCameraSetting.cs" />
     <Compile Include="NullObjectValidationAttribute.cs" />

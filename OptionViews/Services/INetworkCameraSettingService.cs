@@ -30,7 +30,7 @@ namespace OptionViews.Services
 
         ReactiveProperty<int> FrameRateLimit { get; }
 
-        ReactiveProperty<int> BitrateLimit { get; }
+        ReactiveProperty<int> BitRateLimit { get; }
 
         ReactivePropertySlim<bool> CanSelectionChangedCameraDeviceListCommand { get; }
 

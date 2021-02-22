@@ -20,5 +20,7 @@ namespace MainWindowServices
 
 		/// <summary>ProgressRingDialogのIsOpenを取得・設定します</summary>
 		ReactivePropertySlim<bool> IsProgressRingDialogOpen { get; set; }
+
+        Dictionary<int, CaptureCameraClient> CaptureCameraClients { get; }
 	}
 }
