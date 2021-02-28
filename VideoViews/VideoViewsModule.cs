@@ -20,6 +20,7 @@ namespace VideoViews
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterForNavigation<StreamingPanel, StreamingPanelViewModel>();
             containerRegistry.RegisterForNavigation<VideoViewPanel, VideoViewPanelViewModel>();
         }
     }

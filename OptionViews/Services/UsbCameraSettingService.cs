@@ -1,7 +1,6 @@
-﻿using DirectShowCameraClient.Models;
-using HalationGhost;
+﻿using HalationGhost;
 using OpenSCRLib;
-using OptionViews.AdvancedCameraSettings;
+using OptionViews.ViewModels;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using CameraClient.Models.UsbCamera;
 
 namespace OptionViews.Services
 {
@@ -68,15 +68,15 @@ namespace OptionViews.Services
             this.SelectedUsbCameraVideoInfo.Value = null;
         }
 
-        public void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction)
+        public void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveredAction)
         {
-            this._cameraClient.FindUsbCaptureDeviceAsync(discoveriedAction);
+            this._cameraClient.FindUsbCaptureDeviceAsync(discoveredAction);
         }
 
         public async Task RefreshCameraList()
         {
             var selectedUsbCameraVideoInfo = this.SelectedUsbCameraVideoInfo.Value;
-            var slectedCaptureDeviceItem = this.CameraDeviceSelectedItem.Value;
+            var selectedCaptureDeviceItem = this.CameraDeviceSelectedItem.Value;
 
             // 現在の設定をすべてクリアする
             this.Clear();
@@ -91,9 +91,9 @@ namespace OptionViews.Services
 
                     this.CameraDeviceListSource.Add(item);
 
-                    if (slectedCaptureDeviceItem != null)
+                    if (selectedCaptureDeviceItem != null)
                     {
-                        if (captureDevice.DevicePath == slectedCaptureDeviceItem.DevicePath)
+                        if (captureDevice.DevicePath == selectedCaptureDeviceItem.DevicePath)
                         {
                             this.CameraDeviceSelectedItem.Value = item;
                         }
@@ -157,12 +157,12 @@ namespace OptionViews.Services
 
             };
 
-            this._cameraClient.StartCapture(cameraSettings);
+            this._cameraClient?.StartCapture(cameraSettings);
         }
 
         public void StopCapture()
         {
-            this._cameraClient.StopCapture();
+            this._cameraClient?.StopCapture();
         }
     }
 }

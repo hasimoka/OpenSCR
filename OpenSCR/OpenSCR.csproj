@@ -333,6 +333,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CameraClient\CameraClient.csproj">
+      <Project>{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}</Project>
+      <Name>CameraClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HalationGhostModelBase\HalationGhostModelBase.csproj">
       <Project>{0e014fe6-4f62-4da4-abf0-0406db81f989}</Project>
       <Name>HalationGhostModelBase</Name>

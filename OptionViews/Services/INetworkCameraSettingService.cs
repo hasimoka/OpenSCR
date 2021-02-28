@@ -1,12 +1,10 @@
-﻿using OnvifNetworkCameraClient.Models;
-using OpenSCRLib;
-using OptionViews.AdvancedCameraSettings;
-using OptionViews.Models;
+﻿using OpenSCRLib;
+using OptionViews.ViewModels;
 using Reactive.Bindings;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using CameraClient.Models.NetworkCamera;
 
 namespace OptionViews.Services
 {
@@ -47,5 +45,7 @@ namespace OptionViews.Services
         Task MoveAsync(PtzDirection ptzDirection);
 
         void StartCapture();
+
+        void StopCapture();
     }
 }

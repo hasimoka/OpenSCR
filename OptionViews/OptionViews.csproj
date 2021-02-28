@@ -264,48 +264,48 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvancedCameraSettings\AdvancedCameraSettingPanel.xaml.cs">
+    <Compile Include="Views\AdvancedCameraSettingPanel.xaml.cs">
       <DependentUpon>AdvancedCameraSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedCameraSettings\AdvancedCameraSettingPanelViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\NetworkCameraDeviceListItemViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\NetworkCameraListPanel.xaml.cs">
+    <Compile Include="ViewModels\AdvancedCameraSettingPanelViewModel.cs" />
+    <Compile Include="ViewModels\NetworkCameraDeviceListItemViewModel.cs" />
+    <Compile Include="Views\NetworkCameraListPanel.xaml.cs">
       <DependentUpon>NetworkCameraListPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedCameraSettings\NetworkCameraListPanelViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\NetworkCameraSettingPanel.xaml.cs">
+    <Compile Include="ViewModels\NetworkCameraListPanelViewModel.cs" />
+    <Compile Include="Views\NetworkCameraSettingPanel.xaml.cs">
       <DependentUpon>NetworkCameraSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedCameraSettings\NetworkCameraSettingPanelViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\OnvifProfileViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\UsbCameraDeviceListItemViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\UsbCameraListPanel.xaml.cs">
+    <Compile Include="ViewModels\NetworkCameraSettingPanelViewModel.cs" />
+    <Compile Include="ViewModels\OnvifProfileViewModel.cs" />
+    <Compile Include="ViewModels\UsbCameraDeviceListItemViewModel.cs" />
+    <Compile Include="Views\UsbCameraListPanel.xaml.cs">
       <DependentUpon>UsbCameraListPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedCameraSettings\UsbCameraListPanelViewModel.cs" />
-    <Compile Include="AdvancedCameraSettings\UsbCameraSettingPanel.xaml.cs">
+    <Compile Include="ViewModels\UsbCameraListPanelViewModel.cs" />
+    <Compile Include="Views\UsbCameraSettingPanel.xaml.cs">
       <DependentUpon>UsbCameraSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedCameraSettings\UsbCameraSettingPanelViewModel.cs" />
-    <Compile Include="CameraLoginSettings\CameraLoginSettingPanel.xaml.cs">
+    <Compile Include="ViewModels\UsbCameraSettingPanelViewModel.cs" />
+    <Compile Include="Views\CameraLoginSettingPanel.xaml.cs">
       <DependentUpon>CameraLoginSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CameraLoginSettings\CameraLoginSettingPanelViewModel.cs" />
-    <Compile Include="CameraLogoutSettings\CameraLogoutSettingPanel.xaml.cs">
+    <Compile Include="ViewModels\CameraLoginSettingPanelViewModel.cs" />
+    <Compile Include="Views\CameraLogoutSettingPanel.xaml.cs">
       <DependentUpon>CameraLogoutSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CameraLogoutSettings\CameraLogoutSettingPanelViewModel.cs" />
-    <Compile Include="CammeraCommons\CommonCameraSetting.cs" />
-    <Compile Include="CammeraCommons\ICommonCameraSetting.cs" />
+    <Compile Include="ViewModels\CameraLogoutSettingPanelViewModel.cs" />
+    <Compile Include="Models\CommonCameraSetting.cs" />
+    <Compile Include="Models\ICommonCameraSetting.cs" />
     <Compile Include="Models\DeviceTypeItem.cs" />
-    <Compile Include="CammeraCommons\CameraCommonPanel.xaml.cs">
+    <Compile Include="Views\CameraCommonPanel.xaml.cs">
       <DependentUpon>CameraCommonPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CammeraCommons\CameraCommonPanelViewModel.cs" />
-    <Compile Include="OptionCommons\OptionCommonPanel.xaml.cs">
+    <Compile Include="ViewModels\CameraCommonPanelViewModel.cs" />
+    <Compile Include="Views\OptionCommonPanel.xaml.cs">
       <DependentUpon>OptionCommonPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OptionCommons\OptionCommonPanelViewModel.cs" />
+    <Compile Include="ViewModels\OptionCommonPanelViewModel.cs" />
     <Compile Include="OptionViewsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommonCameraSettingService.cs" />
@@ -320,47 +320,47 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="AdvancedCameraSettings\AdvancedCameraSettingPanel.xaml">
+    <Page Include="Views\AdvancedCameraSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AdvancedCameraSettings\NetworkCameraListPanel.xaml">
+    <Page Include="Views\NetworkCameraListPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AdvancedCameraSettings\NetworkCameraSettingPanel.xaml">
+    <Page Include="Views\NetworkCameraSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AdvancedCameraSettings\UsbCameraListPanel.xaml">
+    <Page Include="Views\UsbCameraListPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AdvancedCameraSettings\UsbCameraSettingPanel.xaml">
+    <Page Include="Views\UsbCameraSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CameraLoginSettings\CameraLoginSettingPanel.xaml">
+    <Page Include="Views\CameraLoginSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CameraLogoutSettings\CameraLogoutSettingPanel.xaml">
+    <Page Include="Views\CameraLogoutSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CammeraCommons\CameraCommonPanel.xaml">
+    <Page Include="Views\CameraCommonPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="OptionCommons\OptionCommonPanel.xaml">
+    <Page Include="Views\OptionCommonPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowCameraClient\DirectShowCameraClient.csproj">
-      <Project>{7c3968f9-7ebb-4a30-b50c-cde22d1ce7a6}</Project>
-      <Name>DirectShowCameraClient</Name>
+    <ProjectReference Include="..\CameraClient\CameraClient.csproj">
+      <Project>{f093edfc-da4e-44a2-90e8-8b8e4ff40770}</Project>
+      <Name>CameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\HalationGhostModelBase\HalationGhostModelBase.csproj">
       <Project>{0e014fe6-4f62-4da4-abf0-0406db81f989}</Project>
@@ -373,10 +373,6 @@
     <ProjectReference Include="..\MainWindowServices\MainWindowServices.csproj">
       <Project>{a23c1591-e241-45b6-888f-9a90fe9f4773}</Project>
       <Name>MainWindowServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnvifNetworkCameraClient\OnvifNetworkCameraClient.csproj">
-      <Project>{3d5856c9-8ee1-4dd3-abe0-739b7a718077}</Project>
-      <Name>OnvifNetworkCameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenSCRLib\OpenSCRLib.csproj">
       <Project>{e91f8d02-325d-4cd7-8457-7b1b9c8b37d9}</Project>

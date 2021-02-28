@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="VideoViews.Views.StreamingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VideoViews.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="CameraImage" Grid.Row="0" Stretch="Uniform" Source="{Binding FrameImage.Value, UpdateSourceTrigger=PropertyChanged}"/>
+        <Canvas x:Name="TimelineCanvas" Grid.Row="1" SnapsToDevicePixels="True" Margin="10" Background="Transparent" IsHitTestVisible="True" 
+                MouseLeftButtonDown="TimelineCanvas_MouseLeftButtonDown"
+                MouseMove="TimelineCanvas_MouseMove"
+                MouseLeftButtonUp="TimelineCanvas_MouseLeftButtonUp"
+                MouseLeave="TimelineCanvas_MouseLeave">
+            <Canvas.Style>
+                <Style TargetType="{x:Type Canvas}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True" >
+                            <Setter Property="Cursor" Value="SizeWE" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Canvas.Style>
+            <Line x:Name="BaseLineTop" Stroke="Black" StrokeThickness="1" IsHitTestVisible = "False"/>
+            <Line x:Name="BaseLineCenter" Stroke="Black" StrokeThickness="2" IsHitTestVisible = "False"/>
+            <Line x:Name="BaseLineBottom" Stroke="Black" StrokeThickness="1" IsHitTestVisible = "False"/>
+
+            <Line x:Name="CenterLine" Stroke="Red" StrokeThickness="2" IsHitTestVisible = "False"/>
+            <Polygon x:Name="CenterLineTriangle" Stroke="Red"  Fill="Red" FillRule="Nonzero" IsHitTestVisible = "False"/>
+        </Canvas>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <TextBlock x:Name="DisplayDateTextBlock" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="DisplayTimeTextBlock" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+</UserControl>

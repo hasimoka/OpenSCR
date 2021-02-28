@@ -51,8 +51,7 @@ namespace VideoViews.ViewModels
             var connectedCount = 0;
             foreach (var cameraClientPair in _mainWindowService.CaptureCameraClients)
             {
-                
-                var setting = new CameraViewItemViewModel(cameraClientPair.Value);
+                var setting = new CameraViewItemViewModel(cameraClientPair.Value, regionManager);
                 this.CameraViewItems.Add(setting);
                 connectedCount += 1;
             }

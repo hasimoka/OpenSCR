@@ -125,23 +125,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CaptureCameraClient.cs" />
     <Compile Include="IMainWindowService.cs" />
     <Compile Include="MainWindowService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowCameraClient\DirectShowCameraClient.csproj">
-      <Project>{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}</Project>
-      <Name>DirectShowCameraClient</Name>
+    <ProjectReference Include="..\CameraClient\CameraClient.csproj">
+      <Project>{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}</Project>
+      <Name>CameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\HalationGhostModelBase\HalationGhostModelBase.csproj">
       <Project>{0e014fe6-4f62-4da4-abf0-0406db81f989}</Project>
       <Name>HalationGhostModelBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnvifNetworkCameraClient\OnvifNetworkCameraClient.csproj">
-      <Project>{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}</Project>
-      <Name>OnvifNetworkCameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenSCRLib\OpenSCRLib.csproj">
       <Project>{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}</Project>

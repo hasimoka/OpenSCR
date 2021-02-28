@@ -16,7 +16,7 @@ namespace OpenSCRLib
 
         public VideoEncoding Encoding { get; set; }
 
-        public int BitrateLimite { get; set; }
+        public int BitRateLimit { get; set; }
 
         public int EncodingInterval { get; set; }
 

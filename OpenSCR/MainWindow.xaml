@@ -45,23 +45,21 @@
                                            VerticalAlignment="Center"/>
             </Grid>
         </materialDesign:DialogHost.DialogContent>
-        <metro:HamburgerMenu Grid.Column="0"
- 						 ItemTemplate="{StaticResource MenuData}"
- 						 OptionsItemTemplate="{StaticResource MenuData}"
- 						 ItemsSource="{Binding MenuItems}"
- 						 OptionsItemsSource="{Binding OptionMenuItems}"
- 						 PaneBackground="{StaticResource MaterialDesignDarkBackground}"
- 						 OpenPaneLength="300"
- 						 DisplayMode="{Binding HamburgerMenuDisplayMode.Value}"
- 						 IsPaneOpen="{Binding IsHamburgerMenuPanelOpened.Value, Mode=TwoWay}"
- 						 SelectedItem="{Binding SelectedMenu.Value, Mode=TwoWay}"
- 						 SelectedIndex="{Binding SelectedMenuIndex.Value, Mode=TwoWay}"
- 						 SelectedOptionsItem="{Binding SelectedOption.Value, Mode=TwoWay}"
- 						 SelectedOptionsIndex="{Binding SelectedOptionIndex.Value, Mode=TwoWay}">
+        <metro:HamburgerMenu ItemTemplate="{StaticResource MenuData}"
+                             OptionsItemTemplate="{StaticResource MenuData}"
+                             ItemsSource="{Binding MenuItems}"
+                             OptionsItemsSource="{Binding OptionMenuItems}"
+                             PaneBackground="{StaticResource MaterialDesignDarkBackground}"
+                             OpenPaneLength="300"
+                             DisplayMode="{Binding HamburgerMenuDisplayMode.Value}"
+                             IsPaneOpen="{Binding IsHamburgerMenuPanelOpened.Value, Mode=TwoWay}"
+                             SelectedItem="{Binding SelectedMenu.Value, Mode=TwoWay}"
+                             SelectedIndex="{Binding SelectedMenuIndex.Value, Mode=TwoWay}"
+                             SelectedOptionsItem="{Binding SelectedOption.Value, Mode=TwoWay}"
+                             SelectedOptionsIndex="{Binding SelectedOptionIndex.Value, Mode=TwoWay}">
             <metro:HamburgerMenu.Content>
                 <Grid>
                     <metro:TransitioningContentControl x:Name="ContentRegion"
-												   Grid.Row="1"
 												   prism:RegionManager.RegionName="ContentRegion"
 												   Transition="{Binding ContentControlTransition.Value}"/>
                 </Grid>

@@ -98,6 +98,7 @@
     <Compile Include="NullObjectValidationAttribute.cs" />
     <Compile Include="OnvifNetworkCameraProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordedFrameBaseFolder.cs" />
     <Compile Include="UsbCameraDeviceInfo.cs" />
     <Compile Include="UsbCameraSetting.cs" />
     <Compile Include="UsbCameraVideoInfo.cs" />

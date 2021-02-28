@@ -12,6 +12,8 @@ namespace OpenSCRLib
 
         private const string CameraSettingTable = "camera_settings";
 
+        private const string RecordedFrameBaseFolderTable = "recorded_frame_base_folders";
+
         public DatabaseAccessor()
         {
             // DBファイルを格納するフォルダの存在チェック／初期作成
@@ -30,11 +32,11 @@ namespace OpenSCRLib
                 using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
                     var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
-                    var records = col.FindAll();
-                    if (records.Count() > 0)
+                    var records = col.FindAll().ToArray();
+                    if (records.Any())
                     {
-                        nextCameraChannel = records.Max(x => x.CameraChannel);
-                        nextCameraChannel += 1;
+                        var cameraChannels = records.OrderBy(x => x.CameraChannel).Select(x => x.CameraChannel).ToArray();
+                        nextCameraChannel = cameraChannels.Where(x => !cameraChannels.Contains(x+1)).Select(x=>x+1).Min();
                     }
                     else
                     {
@@ -52,14 +54,14 @@ namespace OpenSCRLib
 
         public List<CameraSetting> FindCameraSettings()
         {
-            List<CameraSetting> cameraSettings = new List<CameraSetting>();
+            var cameraSettings = new List<CameraSetting>();
 
             try
             {
                 using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
                 {
                     var col = liteDb.GetCollection<CameraSetting>(CameraSettingTable);
-                    cameraSettings = col.FindAll().ToList();
+                    cameraSettings = col.FindAll().OrderBy(x => x.CameraChannel).ToList();
                 }
             }
             catch (Exception ex)
@@ -128,6 +130,50 @@ namespace OpenSCRLib
             }
 
             return result;
+        }
+
+        public bool UpdateOrInsertRecordedFrameBaseFolder(string baseFolder)
+        {
+            var result = false;
+
+            try
+            {
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
+                {
+                    var recordedFrameBaseFolder = new RecordedFrameBaseFolder {BaseFolder = baseFolder};
+
+                    var col = liteDb.GetCollection<RecordedFrameBaseFolder>(RecordedFrameBaseFolderTable);
+                    result = col.Upsert(recordedFrameBaseFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return result;
+        }
+
+        public string GetRecordedFrameBaseFolder()
+        {
+            var baseFolder = string.Empty;
+
+            try
+            {
+                using (var liteDb = new LiteDatabase($"Filename={DataBaseFileName}; Mode=Exclusive;"))
+                {
+                    var col = liteDb.GetCollection<RecordedFrameBaseFolder>(RecordedFrameBaseFolderTable);
+                    var recordedFrameBaseFolder = col.FindOne(x => x.Id == RecordedFrameBaseFolder.FixedId);
+                    if (recordedFrameBaseFolder != null)
+                        baseFolder = recordedFrameBaseFolder.BaseFolder;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return baseFolder;
         }
     }
 }

@@ -1,18 +1,15 @@
 ﻿using HalationGhost;
-using OnvifNetworkCameraClient.Models;
 using OpenSCRLib;
-using OptionViews.AdvancedCameraSettings;
-using OptionViews.Models;
+using OptionViews.ViewModels;
 using Prism.Ioc;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using CameraClient.Models.NetworkCamera;
 
 namespace OptionViews.Services
 {
@@ -178,7 +175,7 @@ namespace OptionViews.Services
                             if (profile.ProfileToken == selectedProfileToken.ProfileToken)
                             {
                                 this.FrameRateLimit.Value = profile.FrameRateLimit;
-                                this.BitRateLimit.Value = profile.BitrateLimite;
+                                this.BitRateLimit.Value = profile.BitRateLimit;
 
                                 this.SelectedNetworkCameraProfile.Value = profile;
                             }
@@ -271,12 +268,12 @@ namespace OptionViews.Services
                 }
             };
 
-            this._cameraClient.StartCapture(cameraSettings);
+            this._cameraClient?.StartCapture(cameraSettings);
         }
 
         public void StopCapture()
         {
-            this._cameraClient.StopCapture();
+            this._cameraClient?.StopCapture();
         }
     }
 }

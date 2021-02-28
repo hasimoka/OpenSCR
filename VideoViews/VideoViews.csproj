@@ -218,7 +218,12 @@
     <Compile Include="VideoViewsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\CameraViewItemViewModel.cs" />
+    <Compile Include="ViewModels\StreamingPanelViewModel.cs" />
     <Compile Include="ViewModels\VideoViewPanelViewModel.cs" />
+    <Compile Include="Views\Messenger.cs" />
+    <Compile Include="Views\StreamingPanel.xaml.cs">
+      <DependentUpon>StreamingPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\VideoViewPanel.xaml.cs">
       <DependentUpon>VideoViewPanel.xaml</DependentUpon>
     </Compile>
@@ -228,15 +233,19 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\StreamingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\VideoViewPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowCameraClient\DirectShowCameraClient.csproj">
-      <Project>{7c3968f9-7ebb-4a30-b50c-cde22d1ce7a6}</Project>
-      <Name>DirectShowCameraClient</Name>
+    <ProjectReference Include="..\CameraClient\CameraClient.csproj">
+      <Project>{f093edfc-da4e-44a2-90e8-8b8e4ff40770}</Project>
+      <Name>CameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\HalationGhostModelBase\HalationGhostModelBase.csproj">
       <Project>{0e014fe6-4f62-4da4-abf0-0406db81f989}</Project>
@@ -249,10 +258,6 @@
     <ProjectReference Include="..\MainWindowServices\MainWindowServices.csproj">
       <Project>{a23c1591-e241-45b6-888f-9a90fe9f4773}</Project>
       <Name>MainWindowServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnvifNetworkCameraClient\OnvifNetworkCameraClient.csproj">
-      <Project>{3d5856c9-8ee1-4dd3-abe0-739b7a718077}</Project>
-      <Name>OnvifNetworkCameraClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenSCRLib\OpenSCRLib.csproj">
       <Project>{e91f8d02-325d-4cd7-8457-7b1b9c8b37d9}</Project>

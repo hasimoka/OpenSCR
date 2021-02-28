@@ -1,21 +1,12 @@
-﻿using OptionViews.AdvancedCameraSettings;
-using OptionViews.CameraLoginSettings;
-using OptionViews.CameraLogoutSettings;
-using OptionViews.CammeraCommons;
-using OptionViews.Models;
-using OptionViews.OptionCommons;
-using OptionViews.Services;
+﻿using OptionViews.Services;
+using OptionViews.ViewModels;
+using OptionViews.Views;
 using Prism.Ioc;
 using Prism.Modularity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OptionViews
 {
-	public class OptionViewsModule : IModule
+    public class OptionViewsModule : IModule
 	{
 		public void OnInitialized(IContainerProvider containerProvider)
 		{

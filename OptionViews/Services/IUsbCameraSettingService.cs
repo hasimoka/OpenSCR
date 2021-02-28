@@ -1,13 +1,9 @@
-﻿using DirectShowCameraClient;
-using OpenSCRLib;
-using OptionViews.AdvancedCameraSettings;
+﻿using OpenSCRLib;
+using OptionViews.ViewModels;
 using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace OptionViews.Services
@@ -30,7 +26,7 @@ namespace OptionViews.Services
 
         Task RefreshCameraList();
 
-        void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveriedAction);
+        void FindCaptureDeviceAsync(Action<UsbCameraDeviceInfo> discoveredAction);
 
         Task<List<UsbCameraDeviceInfo>> DiscoveryCaptureDeviceAsync();
 

@@ -5,6 +5,7 @@ using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CameraClient.Models;
 
 namespace MainWindowServices
 {

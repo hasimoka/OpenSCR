@@ -15,11 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OptionViews", "OptionViews\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSCRLib", "OpenSCRLib\OpenSCRLib.csproj", "{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowCameraClient", "DirectShowCameraClient\DirectShowCameraClient.csproj", "{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnvifNetworkCameraClient", "OnvifNetworkCameraClient\OnvifNetworkCameraClient.csproj", "{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoViews", "VideoViews\VideoViews.csproj", "{9E600BB3-21CA-462F-B63F-153B7A9CACED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraClient", "CameraClient\CameraClient.csproj", "{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,22 +75,6 @@ Global
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|x64.ActiveCfg = Release|x64
 		{E91F8D02-325D-4CD7-8457-7B1B9C8B37D9}.Release|x64.Build.0 = Release|x64
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|x64.ActiveCfg = Debug|x64
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Debug|x64.Build.0 = Debug|x64
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|x64.ActiveCfg = Release|x64
-		{7C3968F9-7EBB-4A30-B50C-CDE22D1CE7A6}.Release|x64.Build.0 = Release|x64
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Debug|x64.ActiveCfg = Debug|x64
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Debug|x64.Build.0 = Debug|x64
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|x64.ActiveCfg = Release|x64
-		{3D5856C9-8EE1-4DD3-ABE0-739B7A718077}.Release|x64.Build.0 = Release|x64
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Debug|x64.ActiveCfg = Debug|x64
@@ -101,6 +83,14 @@ Global
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Release|x64.ActiveCfg = Release|x64
 		{9E600BB3-21CA-462F-B63F-153B7A9CACED}.Release|x64.Build.0 = Release|x64
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Debug|x64.ActiveCfg = Debug|x64
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Debug|x64.Build.0 = Debug|x64
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Release|x64.ActiveCfg = Release|Any CPU
+		{F093EDFC-DA4E-44A2-90E8-8B8E4FF40770}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,45 +1,43 @@
-﻿using DirectShowCameraClient.Models;
+﻿using CameraClient.Models;
 using HalationGhost;
-using HalationGhost.WinApps;
-using OnvifNetworkCameraClient.Models;
-using OpenSCRLib;
-using Prism.Ioc;
 using Prism.Regions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using System;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using MainWindowServices;
 
 namespace VideoViews.ViewModels
 {
     public class CameraViewItemViewModel : BindableModelBase
     {
-        public CameraViewItemViewModel(CaptureCameraClient cameraClient)
+        private readonly IRegionManager _regionManager;
+
+        public CameraViewItemViewModel(CaptureCameraClient cameraClient, IRegionManager regionMan)
         {
-            this.CameraName = new ReactivePropertySlim<string>(cameraClient.CameraName)
-                .AddTo(this.Disposable);
+            _regionManager = regionMan;
 
-            this.FrameImage = cameraClient.FrameImage
+            CameraName = new ReactivePropertySlim<string>(cameraClient.CameraName)
+                .AddTo(Disposable);
+
+            FrameImage = cameraClient.FrameImage
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
-                .AddTo(this.Disposable);
+                .AddTo(Disposable);
 
-            this.ImageButtonClickCommand = new AsyncReactiveCommand()
-                .WithSubscribe(async () =>
+            ImageButtonClickCommand = new ReactiveCommand()
+                .WithSubscribe(() =>
                 {
-                    await Task.Run(() =>
+                    var streamingPanelParameter = new NavigationParameters
                     {
-                        Console.WriteLine($"Call ImageButtonClickCommand. ({cameraClient.CameraChannel} ch)");
-                    });
+                        {"CaptureCameraClient", cameraClient}
+                    };
+                    _regionManager.RequestNavigate("ContentRegion", "StreamingPanel", streamingPanelParameter);
                 })
-                .AddTo(this.Disposable);
+                .AddTo(Disposable);
         }
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; private set; }
 
         public ReactivePropertySlim<string> CameraName { get; private set; }
 
-        public AsyncReactiveCommand ImageButtonClickCommand { get; private set; }
+        public ReactiveCommand ImageButtonClickCommand { get; private set; }
     }
 }

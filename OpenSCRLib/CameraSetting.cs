@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using System;
+using System.IO;
 
 namespace OpenSCRLib
 {
@@ -9,17 +10,19 @@ namespace OpenSCRLib
         public CameraSetting() { }
 
         [BsonCtor]
-        public CameraSetting(ObjectId id, int cameraChannel, string cameraName, NetworkCameraSetting networkCameraSettings, UsbCameraSetting usbCameraSettings)
+        public CameraSetting(ObjectId id, int cameraChannel, string cameraName, string recordedFrameFolder, NetworkCameraSetting networkCameraSettings, UsbCameraSetting usbCameraSettings)
         {
-            this.Id = id;
+            Id = id;
 
-            this.CameraChannel = cameraChannel;
+            CameraChannel = cameraChannel;
 
-            this.CameraName = cameraName;
+            CameraName = cameraName;
 
-            this.NetworkCameraSettings = networkCameraSettings;
+            RecordedFrameFolder = recordedFrameFolder;
 
-            this.UsbCameraSettings = usbCameraSettings;
+            NetworkCameraSettings = networkCameraSettings;
+
+            UsbCameraSettings = usbCameraSettings;
         }
 
         public ObjectId Id { get; set; }
@@ -28,15 +31,25 @@ namespace OpenSCRLib
 
         public string CameraName { get; set; }
 
+        public string RecordedFrameFolder { get; set; }
+
         public NetworkCameraSetting NetworkCameraSettings { get; set; }
 
         public UsbCameraSetting UsbCameraSettings { get; set; }
+
+        public static string GetRecordedFrameFolder(string baseFolder, int cameraChannel)
+        {
+            if (string.IsNullOrEmpty(baseFolder))
+                baseFolder = @".\Movies";
+
+            return Path.Combine(baseFolder, $"{cameraChannel:00}");
+        }
 
         public void Dispose() { }
 
         public override string ToString()
         {
-            return $"CameraSetting(Id={this.Id}, CameraChannel={this.CameraChannel}, CameraName={this.CameraName}, NetworkCameraSettings={this.NetworkCameraSettings}, UsbCameraSettings={this.UsbCameraSettings}";
+            return $"CameraSetting(Id={Id}, CameraChannel={CameraChannel}, CameraName={CameraName}, RecordedFrameFolder={RecordedFrameFolder} NetworkCameraSettings={NetworkCameraSettings}, UsbCameraSettings={UsbCameraSettings})";
         }
     }
 }
