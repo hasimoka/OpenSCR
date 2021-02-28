@@ -27,8 +27,6 @@ namespace VideoViews.ViewModels
 
         private TimeSpan _timeSpanBetweenPlaytimeAndCurrent;
 
-        private bool _isLive;
-
         public StreamingPanelViewModel(IRegionManager regionMan, IContainerProvider containerProvider, IMainWindowService windowService) : base(regionMan)
         {
             _container = containerProvider;
@@ -47,8 +45,6 @@ namespace VideoViews.ViewModels
             FrameImage = new ReactivePropertySlim<BitmapSource>(new BitmapImage(new Uri(Path.GetFullPath(@".\Images\no_image_g.png"))))
                 .AddTo(disposable);
             //FrameImage = null;
-
-            _isLive = true;
         }
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; private set; }
@@ -89,39 +85,6 @@ namespace VideoViews.ViewModels
 
             // Viewへ再生基準時刻を通知する
             Messenger.Instance.GetEvent<PubSubEvent<DateTime>>().Publish(playingTime);
-
-            if (_isLive)
-                return;
-
-            var isContinue = true;
-            do
-            {
-                if (this._cameraClient.FirstDecodedFrame.Timestamp != null)
-                {
-                    if (this._cameraClient.FirstDecodedFrame.Timestamp.Value <= playingTime)
-                    {
-                        var decodedFrameItem = this._cameraClient.PollFirstDecodedFrame();
-                        this.FrameImage.Value = decodedFrameItem.Image;
-                    }
-                    else if ((playingTime - this._cameraClient.FirstDecodedFrame.Timestamp.Value).Duration() >=
-                             new TimeSpan(0, 0, 30))
-                    {
-                        // 表示時刻とバッファに格納されたフレーム時刻に30秒以上の差異がある場合
-                        this.FrameImage.Value = this._cameraClient.NoFrameImage;
-                        isContinue = false;
-                    }
-                    else
-                    {
-                        isContinue = false;
-                    }
-                }
-                else
-                {
-                    // バッファが空の場合
-                    this.FrameImage.Value = this._cameraClient.NoFrameImage;
-                    isContinue = false;
-                }
-            } while (isContinue);
         }
 
         public void MoveDisplayTime(DateTime displayTime)
@@ -135,8 +98,6 @@ namespace VideoViews.ViewModels
             {
                 _cameraClient.Stop();
 
-                _isLive = true;
-
                 FrameImage?.Dispose();
                 FrameImage = _cameraClient.FrameImage
                     .ToReactivePropertySlimAsSynchronized(x => x.Value)
@@ -149,10 +110,9 @@ namespace VideoViews.ViewModels
                 _cameraClient.Stop();
                 _cameraClient.Play(DateTime.Now - _timeSpanBetweenPlaytimeAndCurrent);
 
-                _isLive = false;
-
                 FrameImage?.Dispose();
-                FrameImage = new ReactivePropertySlim<BitmapSource>(_cameraClient.NoFrameImage)
+                FrameImage = _cameraClient.PlayerFrameImage
+                    .ToReactivePropertySlimAsSynchronized(x => x.Value)
                     .AddTo(disposable);
                 RaisePropertyChanged(nameof(FrameImage));
             }
@@ -162,6 +122,5 @@ namespace VideoViews.ViewModels
         {
             return _cameraClient.SearchRecordedTerms(searchStartTime, searchEndTime);
         }
-
     }
 }

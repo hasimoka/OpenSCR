@@ -6,10 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using HalationGhost;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 
 namespace CameraClient.Models
 {
-    public class RawH264Player : IDisposable
+    public class RawH264Player : BindableModelBase, IDisposable
     {
         private const string RawH264FileFormat = "yyyyMMdd_HHmmss";
         private const string NoImageFilePath = @".\Images\no_image_g.png";
@@ -35,6 +39,10 @@ namespace CameraClient.Models
 
         private Task _decodingTask;
         private CancellationTokenSource _cancellationTokenSource;
+
+        private TimeSpan _timeSpanBetweenPlaytimeAndCurrent;
+
+        private readonly DispatcherTimer _dispatcherTimer;
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
@@ -63,6 +71,9 @@ namespace CameraClient.Models
                 NoFrameImage = bitmap;
             }
 
+            FrameImage = new ReactivePropertySlim<BitmapSource>(NoFrameImage)
+                .AddTo(Disposable);
+
             _currentH264FileNode = null;
             _decodedFrameBuffer = new LinkedList<(DateTime Timestamp, BitmapSource Image)>();
 
@@ -78,11 +89,18 @@ namespace CameraClient.Models
 
             // 指定されたフォルダの録画時間情報を取得する
             _recordedFrameTerms = GetRecordedTerms(rawH264Folder);
+
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            // 30fps間隔(≒34ms)に設定
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 34);
         }
 
         public BitmapSource NoFrameImage { get; set; }
 
-        public (DateTime? Timestamp, BitmapSource Image) FirstDecodedFrame
+        public ReactivePropertySlim<BitmapSource> FrameImage;
+
+        private (DateTime? Timestamp, BitmapSource Image) FirstDecodedFrame
         {
             get
             {
@@ -95,7 +113,7 @@ namespace CameraClient.Models
             }
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             if (_rawH264FileStream != null)
             {
@@ -104,12 +122,16 @@ namespace CameraClient.Models
             }
 
             _decoder.Dispose();
+
+            base.Dispose();
         }
 
         public void Play(DateTime playTime)
         {
             try
             {
+                _timeSpanBetweenPlaytimeAndCurrent = DateTime.Now - playTime;
+
                 _currentH264FileNode = FindRawH264File(playTime, _rawH264Files);
                 if (_currentH264FileNode == null) return;
 
@@ -134,6 +156,9 @@ namespace CameraClient.Models
                         await PushDecodedFrameToBufferAsync();
                     }
                 }, _cancellationTokenSource.Token);
+
+
+                _dispatcherTimer.Start();
             }
             catch (Exception ex)
             {
@@ -150,6 +175,8 @@ namespace CameraClient.Models
 
         public void Stop()
         {
+            _dispatcherTimer.Stop();
+
             if (_cancellationTokenSource == null) return;
 
             _cancellationTokenSource.Cancel();
@@ -173,19 +200,6 @@ namespace CameraClient.Models
             _decodedFrameBuffer.Clear();
         }
 
-        public (DateTime? Timestamp, BitmapSource Image) PollFirstDecodedFrame()
-        {
-            if (_decodedFrameBuffer.First != null)
-            {
-                var firstItem = _decodedFrameBuffer.First.Value;
-                _decodedFrameBuffer.RemoveFirst();
-
-                return firstItem;
-            }
-
-            return (null, null);
-        }
-
         public LinkedList<(DateTime startFrameTime, DateTime endFrameTime)> SearchRecordedTerms(DateTime searchStartTime, DateTime searchEndTime)
         {
             var recordedTerms = new LinkedList<(DateTime startFrameTime, DateTime endFrameTime)>();
@@ -203,6 +217,55 @@ namespace CameraClient.Models
             }
 
             return recordedTerms;
+        }
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            // 再生表示日時を算出する
+            var playingTime = DateTime.Now - this._timeSpanBetweenPlaytimeAndCurrent;
+
+            var isContinue = true;
+            do
+            {
+                if (FirstDecodedFrame.Timestamp != null)
+                {
+                    if (FirstDecodedFrame.Timestamp.Value <= playingTime)
+                    {
+                        var decodedFrameItem = PollFirstDecodedFrame();
+                        FrameImage.Value = decodedFrameItem.Image;
+                    }
+                    else if ((playingTime - FirstDecodedFrame.Timestamp.Value).Duration() >=
+                             new TimeSpan(0, 0, 30))
+                    {
+                        // 表示時刻とバッファに格納されたフレーム時刻に30秒以上の差異がある場合
+                        FrameImage.Value = NoFrameImage;
+                        isContinue = false;
+                    }
+                    else
+                    {
+                        isContinue = false;
+                    }
+                }
+                else
+                {
+                    // バッファが空の場合
+                    FrameImage.Value = NoFrameImage;
+                    isContinue = false;
+                }
+            } while (isContinue);
+        }
+
+        private (DateTime? Timestamp, BitmapSource Image) PollFirstDecodedFrame()
+        {
+            if (_decodedFrameBuffer.First != null)
+            {
+                var firstItem = _decodedFrameBuffer.First.Value;
+                _decodedFrameBuffer.RemoveFirst();
+
+                return firstItem;
+            }
+
+            return (null, null);
         }
 
         /// <summary>

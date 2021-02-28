@@ -56,19 +56,22 @@ namespace CameraClient.Models
             }
 
             _rawH264Player = new RawH264Player(cameraSettings.RecordedFrameFolder);
+            PlayerFrameImage = _rawH264Player.FrameImage
+                .ToReactivePropertySlimAsSynchronized(x => x.Value)
+                .AddTo(Disposable);
 
             _cameraClient.StartCapture(_cameraSettings);
         }
 
         public ReactivePropertySlim<BitmapSource> FrameImage { get; }
 
+        public ReactivePropertySlim<BitmapSource> PlayerFrameImage { get; }
+
         public BitmapSource NoFrameImage { get; }
 
         public int CameraChannel => _cameraSettings?.CameraChannel ?? -1;
 
         public string CameraName => _cameraSettings?.CameraName ?? string.Empty;
-
-        public (DateTime? Timestamp, BitmapSource Image) FirstDecodedFrame => _rawH264Player.FirstDecodedFrame;
 
         public new void Dispose()
         {
@@ -91,11 +94,6 @@ namespace CameraClient.Models
         public void ClearFrameImage()
         {
             _cameraClient?.ClearFrameImage();
-        }
-
-        public (DateTime? Timestamp, BitmapSource Image) PollFirstDecodedFrame()
-        {
-            return _rawH264Player.PollFirstDecodedFrame();
         }
 
         public LinkedList<(DateTime startFrameTime, DateTime endFrameTime)> SearchRecordedTerms(
