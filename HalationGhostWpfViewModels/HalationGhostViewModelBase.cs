@@ -74,9 +74,9 @@ namespace HalationGhost.WinApps
 
 		}
 
-		public HalationGhostViewModelBase(IRegionManager regionMan) : this()
+		public HalationGhostViewModelBase(IRegionManager regionManager) : this()
 		{
-			this.regionManager = regionMan;
+			this.regionManager = regionManager;
 		}
 
 		#endregion

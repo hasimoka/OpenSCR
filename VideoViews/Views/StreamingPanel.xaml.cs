@@ -54,8 +54,6 @@ namespace VideoViews.Views
 
             _preDrawnTime = null;
 
-            //ContentRendered += OnContentRendered;
-
             Messenger.Instance.GetEvent<PubSubEvent<DateTime>>()
                 .Subscribe(playTime => {
                     if (_preDrawnTime.HasValue)
@@ -132,16 +130,6 @@ namespace VideoViews.Views
 
             _isMouseDownOnTimelineCanvas = false;
         }
-
-        //private void OnContentRendered(object sender, EventArgs e)
-        //{
-        //    var playTime = DateTime.ParseExact("20210206_170130", "yyyyMMdd_HHmmss", null);
-        //    DrawTimeLine(playTime);
-
-        //    Canvas.SetZIndex(BaseLineTop, 1);
-        //    Canvas.SetZIndex(BaseLineCenter, 1);
-        //    Canvas.SetZIndex(BaseLineBottom, 1);
-        //}
 
         private void DrawTimeLine(DateTime playTime)
         {

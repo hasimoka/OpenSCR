@@ -37,9 +37,6 @@ namespace CameraClient.Models
 
         private LinkedListNode<string> _currentH264FileNode;
 
-        private Task _decodingTask;
-        private CancellationTokenSource _cancellationTokenSource;
-
         private TimeSpan _timeSpanBetweenPlaytimeAndCurrent;
 
         private readonly DispatcherTimer _dispatcherTimer;
@@ -78,9 +75,6 @@ namespace CameraClient.Models
             _decodedFrameBuffer = new LinkedList<(DateTime Timestamp, BitmapSource Image)>();
 
             _rawH264FileStream = null;
-
-            _decodingTask = null;
-            _cancellationTokenSource = null;
 
             _bufferLock = new object();
 
@@ -141,23 +135,6 @@ namespace CameraClient.Models
                 // 再生時刻直前(再生時刻を含む)のIフレームの位置までFileStreamをSeekする
                 if (!SeekPlayTime(_rawH264FileStream, playTime)) _rawH264FileStream.Seek(0, SeekOrigin.Begin);
 
-                _cancellationTokenSource = new CancellationTokenSource();
-
-                _decodingTask = Task.Run(async () =>
-                {
-                    while (true)
-                    {
-                        if (_cancellationTokenSource.Token.IsCancellationRequested)
-                        {
-                            // キャンセルされたらTaskを終了する.
-                            return;
-                        }
-
-                        await PushDecodedFrameToBufferAsync();
-                    }
-                }, _cancellationTokenSource.Token);
-
-
                 _dispatcherTimer.Start();
             }
             catch (Exception ex)
@@ -176,16 +153,6 @@ namespace CameraClient.Models
         public void Stop()
         {
             _dispatcherTimer.Stop();
-
-            if (_cancellationTokenSource == null) return;
-
-            _cancellationTokenSource.Cancel();
-
-            // スレッドが終了するまで待つ(デッドロックするかも？)
-            _decodingTask.Wait();
-
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
 
             // RawFileStreamを閉じる
             if (_rawH264FileStream != null)
@@ -221,6 +188,9 @@ namespace CameraClient.Models
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            // バッファにフレーム読み込みをおこなう
+            PushDecodedFrameToBufferAsync();
+
             // 再生表示日時を算出する
             var playingTime = DateTime.Now - this._timeSpanBetweenPlaytimeAndCurrent;
 
@@ -415,7 +385,7 @@ namespace CameraClient.Models
             return recordedTerms;
         }
 
-        private async Task PushDecodedFrameToBufferAsync()
+        private void PushDecodedFrameToBufferAsync()
         {
             // H264ファイルの読み込みをおこない、H264フレームをデコードし、バッファに格納する
             if (_decodedFrameBuffer.Count <= RequiredBufferSize)
@@ -438,10 +408,6 @@ namespace CameraClient.Models
                         _rawH264FileStream = new FileStream(newH264FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     }
                 }
-            }
-            else
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
         }
 
